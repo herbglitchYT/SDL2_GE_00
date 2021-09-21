@@ -1,7 +1,7 @@
 #ifndef GE_HPP
 #define GE_HPP
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <stdio.h>
 #include "handler.hpp"
 #include "object.hpp"

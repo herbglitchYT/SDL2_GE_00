@@ -1,7 +1,7 @@
 #ifndef GE_SPRITE_HPP
 #define GE_SPRITE_HPP
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 namespace ge {
     namespace resource {
