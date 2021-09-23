@@ -33,6 +33,7 @@ namespace ge {
             void setScale(int s){ pos.w = w * s; pos.h = h * s; }
 
             SDL_Rect &getPos(){ return pos; }
+            SDL_Rect &getBounds(){ return bounds; }
 
         private:
             SDL_Rect pos;

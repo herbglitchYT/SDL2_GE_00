@@ -17,6 +17,8 @@ namespace ge {
         Keyboard keyboard;
 
         SDL_Window *window;
+        SDL_Rect windowSize;
+
         SDL_Renderer *renderer;
 
         SDL_Event event;
@@ -32,7 +34,8 @@ namespace ge {
             return 3;
         }
 
-        if(SDL_CreateWindowAndRenderer(width, height, 0, &(data->window), &(data->renderer))){
+        data->windowSize = { 0, 0, width, height };
+        if(SDL_CreateWindowAndRenderer(data->windowSize.w, data->windowSize.h, 0, &(data->window), &(data->renderer))){
             printf("Error: creating window and renderer\nSDL Error: ", SDL_GetError());
             return 3;
         }
