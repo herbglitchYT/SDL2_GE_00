@@ -7,9 +7,11 @@ namespace ge {
     namespace resource {
         class Sprite {
         public:
-            Sprite(SDL_Texture *spritesheet, int xBound, int yBound, int wBound, int hBound, int xPos, int yPos): spritesheet(spritesheet), bounds(SDL_Rect {xBound, yBound, wBound, hBound}), pos(SDL_Rect {xPos, yPos, wBound, hBound}), x((float)xPos), y((float)yPos){}
-            Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int xPos, int yPos): spritesheet(spritesheet), bounds(bounds), pos(SDL_Rect {xPos, yPos, bounds.w, bounds.h}), x((float)xPos), y((float)yPos){}
-            Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, SDL_Point pos): spritesheet(spritesheet), bounds(bounds), pos(SDL_Rect {pos.x, pos.y, bounds.w, bounds.h}), x((float)pos.x), y((float)pos.y){}
+            Sprite(SDL_Texture *spritesheet, int xBound, int yBound, int wBound, int hBound, int xPos, int yPos): spritesheet(spritesheet), bounds(SDL_Rect {xBound, yBound, wBound, hBound}), pos(SDL_Rect {xPos, yPos, wBound, hBound}), w(bounds.w), h(bounds.h), x((float)xPos), y((float)yPos){}
+            Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int xPos, int yPos): spritesheet(spritesheet), bounds(bounds), pos(SDL_Rect {xPos, yPos, bounds.w, bounds.h}), w(bounds.w), h(bounds.h), x((float)xPos), y((float)yPos){}
+            Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, SDL_Point pos): spritesheet(spritesheet), bounds(bounds), pos(SDL_Rect {pos.x, pos.y, bounds.w, bounds.h}), w(bounds.w), h(bounds.h), x((float)pos.x), y((float)pos.y){}
+
+            // ~Sprite(){ SDL_DestroyTexture(spritesheet); } //TODO: Figure out if this causes a memory leak
 
             void move(float x, float y){ this->x += x; this->y += y; pos.x = (int)this->x; pos.y = (int)this->y; }
             void move(int x, int y){ pos.x += x; pos.y += y; this->x = (float)pos.x; this->y = (float)pos.y; }
@@ -28,6 +30,8 @@ namespace ge {
             void setBounds(int x, int y){bounds.x = x; bounds.y = y; }
             void setBounds(SDL_Point pos){bounds.x = pos.x; bounds.y = pos.y; }
 
+            void setScale(int s){ pos.w = w * s; pos.h = h * s; }
+
             SDL_Rect &getPos(){ return pos; }
 
         private:
@@ -35,6 +39,7 @@ namespace ge {
             SDL_Rect bounds;
             SDL_Texture *spritesheet;
 
+            int w, h;
             float x, y;
         };
     }
