@@ -10,6 +10,8 @@
 #include "resource/spritesheet.hpp"
 #include "resource/sprite.hpp"
 
+#define ge_run(state, width, height, title) ge::Run<state>(width, height, title);
+
 namespace ge {
     struct Data {
         Handler<Object> state;
@@ -28,7 +30,9 @@ namespace ge {
     };
 
     template <class initState>
-    inline int Run(Data *data, int width, int height, const char *title){
+    inline int Run(int width, int height, const char *title){
+        Data *data = new Data();
+
         if(SDL_Init(SDL_INIT_VIDEO) < 0){
             printf("Error: initializing SDL\nSDL Error: ", SDL_GetError());
             return 3;
@@ -66,6 +70,8 @@ namespace ge {
 
         SDL_DestroyRenderer(data->renderer);
         SDL_DestroyWindow(data->window);
+
+        delete data;
 
         return 0;
     }
