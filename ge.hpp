@@ -11,6 +11,8 @@
 #include "resource/sprite.hpp"
 
 #define ge_run(state, width, height, title) ge::Run<state>(width, height, title);
+#define ge_main(state, width, height, title) int main(int argc, char *argv[]){\
+    return ge_run(state, width, height, title); }
 
 namespace ge {
     struct Data {
