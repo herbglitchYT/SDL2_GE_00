@@ -21,15 +21,19 @@ namespace ge {
 
             std::string data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-            return load(data);
+            return load(data, std::string(path));
         }
 
-        int load(std::string &data){ 
+        int load(std::string &data, std::string path){ 
             for(unsigned int i = 0; i < data.length(); i++){
-                if(data.at(i) == '/' && data.at(i + 1) == '/'){ comment(data, i); }
-                if(data.at(i) == '/' && data.at(i + 1) == '*'){ comment(data, i, true); }
-                if(data.at(i) == '#'){ hash(data, i); }
+                if(data.substr(i, 2) == "//"){ comment(data, i); }
+                if(data.substr(i, 2) == "/*"){ comment(data, i, true); }
+                if(data.at(i) == '#'){ hash(data, i, path); }
             }
+
+            data.erase(std::remove_if(data.begin(), data.end(), ::isspace), data.end());
+
+            // group("", )
         }
 
         void unload(const char* path){
@@ -40,39 +44,46 @@ namespace ge {
         void get(std::string name, T &var){}
 
     private:
+        struct Group {
+            std::string name;
+            std::vector<std::string> data;
+        };
+        
         void comment(std::string &data, unsigned int &i, bool multi = false){
             int s = 2;
             if(!multi){
-                while((data.at(s - 1) != '\n') || s >= data.length()){ s++; }
+                while((data.at(i + s - 1) != '\n') && (i + s < data.length())){ s++; }
             }
             else {
-                while((data.at(s - 2) != '*') || (data.at(s - 1) != '/') || s >= data.length()){ s++; }
+                while((data.substr(i + s - 2, 2) != "*/") && (i + s < data.length())){ s++; }
             }
-            data = data.substr(0, i - 1).substr(s, data.length());
+
+            data = data.substr(0, i - 1) + data.substr(i + s, data.length());
         }
 
-        bool hash(std::string &data, unsigned int &i){
+        bool hash(std::string &data, unsigned int &i, std::string path){
             int s = 1;
-            while(data.at(i + s) != '\n' || data.at(i + s) != '#'){ s++; }
+            while((data.at(i + s) != '\n') && (i + s < data.length())){ s++; }
 
             std::string temp = data.substr(i + 1, s - i);
+            data = data.substr(0, i - 1) + data.substr(i + s, data.length());
             i = s + i;
-  
+
             if(temp.find(' ') == std::string::npos){ return 1; }
             std::string first = temp.substr(0, temp.find_first_of(' '));
 
-            std::string second = temp.substr(temp.find_first_of(' ') + 1, temp.size() - 1); 
-            second.erase(std::remove_if(second.begin(), second.end(), ::isspace), second.end());
-            second = second.substr(1, second.size() - 2);
+            if(first == "include"){
+                std::string npath = path.substr(0, path.find_last_of("/") + 1);
 
-            if(first == "include"){ return load(second); }
-            if(first == "group"  ){
-                cData.push_back(std::pair<std::string, std::vector<std::string>>(second, std::vector<std::string>()));
+                npath += temp.substr(temp.find_first_of('"') + 1, temp.find_last_of('"') - temp.find_first_of('"') - 1); 
+
+                return load(npath.c_str());
             }
-            return 0;
+
+            return 1;
         }
 
-        std::vector<std::pair<std::string, std::vector<std::string>>> cData;
+        std::vector<Group> data;
     };
 }
 // const Uint8 *state = SDL_GetKeyboardState(nullptr);
