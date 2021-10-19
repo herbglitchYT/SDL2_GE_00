@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <stdio.h>
+#include "config.hpp"
 #include "handler.hpp"
 #include "object.hpp"
 #include "input/mouse.hpp"
@@ -10,9 +11,13 @@
 #include "resource/spritesheet.hpp"
 #include "resource/sprite.hpp"
 
+<<<<<<< HEAD
 #define ge_run(state, width, height, title) ge::Run<state>(width, height, title);
 #define ge_main(state, width, height, title) int main(int argc, char *argv[]){\
     return ge_run(state, width, height, title); }
+=======
+#define ge_run(state, width, height, title) GE::Run<state>(width, height, title);
+>>>>>>> 672f8e8ff7c3ed5e8fd31b04555482ec0a79c600
 
 namespace ge {
     struct Data {
@@ -30,10 +35,13 @@ namespace ge {
         float scale = 8.0f;
         float dt;
     };
+}
 
+class GE {
+public:
     template <class initState>
-    inline int Run(int width, int height, const char *title){
-        Data *data = new Data();
+    static int Run(int width, int height, const char *title){
+        ge::Data *data = new ge::Data();
 
         if(SDL_Init(SDL_INIT_VIDEO) < 0){
             printf("Error: initializing SDL\nSDL Error: ", SDL_GetError());
@@ -77,6 +85,6 @@ namespace ge {
 
         return 0;
     }
-}
+};
 
 #endif // !GE_HPP
