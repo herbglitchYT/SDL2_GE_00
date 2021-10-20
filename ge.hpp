@@ -11,17 +11,15 @@
 #include "resource/spritesheet.hpp"
 #include "resource/sprite.hpp"
 
-<<<<<<< HEAD
-#define ge_run(state, width, height, title) ge::Run<state>(width, height, title);
+#define ge_run(state, width, height, title) GE::Run<state>(width, height, title);
 #define ge_main(state, width, height, title) int main(int argc, char *argv[]){\
     return ge_run(state, width, height, title); }
-=======
-#define ge_run(state, width, height, title) GE::Run<state>(width, height, title);
->>>>>>> 672f8e8ff7c3ed5e8fd31b04555482ec0a79c600
 
 namespace ge {
     struct Data {
         Handler<Object> state;
+        Config config;
+
         Mouse mouse;
         Keyboard keyboard;
 
@@ -56,6 +54,7 @@ public:
 
         SDL_SetWindowTitle(data->window, title);
 
+        data->config = ge::Config(data->renderer);
         data->state.add(new initState(data));
 
         float lastTime = 0, currentTime;

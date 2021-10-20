@@ -3,17 +3,23 @@
 #include <SDL.h>
 #include <string>
 #include <algorithm>
-#include <type_traits>
 #include <fstream>
 #include <vector>
+#include <map>
+#include "resource/spritesheet.hpp"
 
-#define ge_var(var) get<decltype(var)>(var, #var)
+#define ge_var(var) get(#var, var)
 
 namespace ge {
     class Config {
     public:
         Config(){}
-        ~Config(){}
+        Config(SDL_Renderer *renderer): renderer(renderer){}
+        Config(const char* path, SDL_Renderer *renderer): renderer(renderer){ load(path); }
+
+        ~Config(){
+            for(Group *group : groups){ delete group; }
+        }
 
         int load(const char* path){
             std::ifstream file(path);
@@ -28,27 +34,85 @@ namespace ge {
             for(unsigned int i = 0; i < data.length(); i++){
                 if(data.substr(i, 2) == "//"){ comment(data, i); }
                 if(data.substr(i, 2) == "/*"){ comment(data, i, true); }
-                if(data.at(i) == '#'){ hash(data, i, path); }
+                if(data.at(i) == '#'){
+                    if(hash(data, i, path)){ return 1; }
+                }
             }
 
             data.erase(std::remove_if(data.begin(), data.end(), ::isspace), data.end());
-
-            // group("", )
+            return group("", data);
         }
 
         void unload(const char* path){
 
         }
 
-        template <class T>
-        void get(std::string name, T &var){}
+        void printGroups(){
+            for(Group *group : groups){
+                printf(">%s\n", group->name.c_str());
+                for(auto &gmap : group->data){
+                    printf("\t>%s=%s\n", gmap.first.c_str(), gmap.second.c_str());
+                }
+            }
+        }
+
+        Config &operator+=(std::string path){
+            this->load(path.c_str());
+            return *this;
+        }
+
+        Config &operator+=(const char* path){
+            this->load(path);
+            return *this;
+        }
+
+        Config &operator+=(char* path){
+            this->load((const char *)path);
+            return *this;
+        }
+
+        void get(std::string name, int &var){ var = stoi(currGroup->data[name]); }
+        void get(std::string name, std::string &var){ var = currGroup->data[name]; }
+
+        void get(std::string name, SDL_Texture *&var){
+            var = resource::spritesheet(renderer, currGroup->data[name].c_str());
+        }
+
+        void get(std::string name, SDL_Rect &var){
+            std::string data = currGroup->data[name];
+            var.x = stoi(data.substr(1, data.find_first_of(',')));
+            data = data.substr(data.find_first_of(',') + 1);
+
+            var.y = stoi(data.substr(0, data.find_first_of(',')));
+            data = data.substr(data.find_first_of(',') + 1);
+
+            var.w = stoi(data.substr(0, data.find_first_of(',')));
+            data = data.substr(data.find_first_of(',') + 1);
+
+            var.h = stoi(data.substr(0, data.find_first_of('}')));
+        }
+
+        bool setGroup(std::string name){
+            currGroup = getGroup(name);
+            return (bool) currGroup;
+        }
 
     private:
         struct Group {
             std::string name;
-            std::vector<std::string> data;
+            std::map<std::string, std::string> data;
+
+            Group(std::string name): name(name){}
         };
-        
+
+        Group *getGroup(std::string name){
+            for(Group *&group : groups){
+                if(group->name == name){ return group; }
+            }
+
+            return nullptr;
+        }
+
         void comment(std::string &data, unsigned int &i, bool multi = false){
             int s = 2;
             if(!multi){
@@ -83,7 +147,48 @@ namespace ge {
             return 1;
         }
 
-        std::vector<Group> data;
+        bool group(std::string name, std::string &data){
+            Group *g = getGroup(name);
+            if(!g){ g = new Group(name); }
+
+            std::string temp;
+            int ret = 0;
+
+            while(data.size() > 0){
+                if(data.at(0) == '}'){
+                    data = data.substr(1, data.size() - 1);
+                    groups.push_back(g);
+                    return 0;
+                }
+
+                if(data.substr(0, 5) == "group"){
+                    temp = data.substr(5, data.find_first_of('{') - 5);
+                    data = data.substr(data.find_first_of('{') + 1, data.size() - 1);
+
+                    ret = group(temp, data);
+                    continue;
+                }
+
+                std::string var = data.substr(0, data.find_first_of('='));
+                std::string val = data.substr(var.size() + 1, data.find_first_of(';') - (var.size() + 1));
+                g->data[var] = val;
+
+                if(var.size() + val.size() + 2 < data.size()){
+                    data = data.substr(var.size() + val.size() + 2, data.size() - 1);
+                    continue;
+                }
+
+                data = "";
+            }
+
+            if(g->data.size()){ groups.push_back(g); }
+            else { delete g; }
+            return ret;
+        }
+
+        std::vector<Group *> groups;
+        Group *currGroup;
+        SDL_Renderer *renderer;
     };
 }
 // const Uint8 *state = SDL_GetKeyboardState(nullptr);
