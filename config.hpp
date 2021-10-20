@@ -56,18 +56,33 @@ namespace ge {
             }
         }
 
+        Config &operator=(std::string path){
+            setGroup(path);
+            return *this;
+        }
+
+        Config &operator=(const char *path){
+            setGroup(std::string(path));
+            return *this;
+        }
+
+        Config &operator=(char *path){
+            setGroup(std::string(path));
+            return *this;
+        }
+
         Config &operator+=(std::string path){
-            this->load(path.c_str());
+            load(path.c_str());
             return *this;
         }
 
-        Config &operator+=(const char* path){
-            this->load(path);
+        Config &operator+=(const char *path){
+            load(path);
             return *this;
         }
 
-        Config &operator+=(char* path){
-            this->load((const char *)path);
+        Config &operator+=(char *path){
+            load((const char *)path);
             return *this;
         }
 
@@ -130,17 +145,17 @@ namespace ge {
             while((data.at(i + s) != '\n') && (i + s < data.length())){ s++; }
 
             std::string temp = data.substr(i + 1, s - i);
-            data = data.substr(0, i - 1) + data.substr(i + s, data.length());
+            data = data.substr(0, i) + data.substr(i + s, data.length());
             i = s + i;
 
             if(temp.find(' ') == std::string::npos){ return 1; }
             std::string first = temp.substr(0, temp.find_first_of(' '));
 
+
             if(first == "include"){
                 std::string npath = path.substr(0, path.find_last_of("/") + 1);
 
                 npath += temp.substr(temp.find_first_of('"') + 1, temp.find_last_of('"') - temp.find_first_of('"') - 1); 
-
                 return load(npath.c_str());
             }
 
@@ -149,7 +164,8 @@ namespace ge {
 
         bool group(std::string name, std::string &data){
             Group *g = getGroup(name);
-            if(!g){ g = new Group(name); }
+            bool exists = (bool)g;
+            if(!exists){ g = new Group(name); }
 
             std::string temp;
             int ret = 0;
@@ -157,7 +173,7 @@ namespace ge {
             while(data.size() > 0){
                 if(data.at(0) == '}'){
                     data = data.substr(1, data.size() - 1);
-                    groups.push_back(g);
+                    if(!exists){ groups.push_back(g); }
                     return 0;
                 }
 
@@ -181,7 +197,7 @@ namespace ge {
                 data = "";
             }
 
-            if(g->data.size()){ groups.push_back(g); }
+            if(g->data.size() && !exists){ groups.push_back(g); }
             else { delete g; }
             return ret;
         }
