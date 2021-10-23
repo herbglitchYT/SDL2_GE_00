@@ -3,17 +3,14 @@
 
 #include <SDL.h>
 #include <stdio.h>
-#include "config.hpp"
 #include "handler.hpp"
 #include "object.hpp"
 #include "input/mouse.hpp"
 #include "input/keyboard.hpp"
-#include "resource/spritesheet.hpp"
-#include "resource/sprite.hpp"
+#include "resource/resource.hpp"
 
-#define ge_run(state, width, height, title) GE::Run<state>(width, height, title);
-#define ge_main(state, width, height, title) int main(int argc, char *argv[]){\
-    return ge_run(state, width, height, title); }
+#define GE_MAIN(state, width, height, title) int main(int argc, char *argv[]){\
+    GE ge; return ge.run<state>(width, height, title); }
 
 namespace ge {
     struct Data {
@@ -38,8 +35,8 @@ namespace ge {
 class GE {
 public:
     template <class initState>
-    static int Run(int width, int height, const char *title){
-        ge::Data *data = new ge::Data();
+    int run(int width, int height, const char *title){
+        data = new ge::Data();
 
         if(SDL_Init(SDL_INIT_VIDEO) < 0){
             printf("Error: initializing SDL\nSDL Error: ", SDL_GetError());
@@ -54,7 +51,7 @@ public:
 
         SDL_SetWindowTitle(data->window, title);
 
-        data->config = ge::Config(data->renderer);
+        data->config = ge::Config(data);
         data->state.add(new initState(data));
 
         float lastTime = 0, currentTime;
@@ -84,6 +81,9 @@ public:
 
         return 0;
     }
+
+private:
+    ge::Data *data;
 };
 
 #endif // !GE_HPP

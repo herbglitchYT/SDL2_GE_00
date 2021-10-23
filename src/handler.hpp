@@ -46,10 +46,8 @@ namespace ge {
         }
 
         void clean(){
-            if(!deleteQueue.empty()){
-                for(HandlerType *hType : deleteQueue){ delete hType; }
-                deleteQueue.clear();
-            }
+            for(HandlerType *hType : deleteQueue){ delete hType; }
+            deleteQueue.clear();
         }
 
         void clear(){
