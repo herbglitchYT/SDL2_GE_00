@@ -14,8 +14,7 @@ namespace ge {
     class Config {
     public:
         Config();
-        Config(Data *data);
-        Config(const char* path, Data *data);
+        Config(const char* path);
         ~Config();
 
         int load(const char* path);

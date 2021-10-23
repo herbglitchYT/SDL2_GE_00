@@ -4,11 +4,9 @@
 #include "ge.hpp"
 
 namespace ge {
-    struct Data;
-
     class Object {
     public:
-        Object(Data *data, unsigned int id = 0): data(data), id(id){}
+        Object(unsigned int id = 0): id(id){}
         virtual ~Object(){ };
 
         virtual void update() = 0;
@@ -17,8 +15,6 @@ namespace ge {
         unsigned int getId(){ return id; }
 
     protected:
-        Data *data;
-
         unsigned int id;
     };
 }

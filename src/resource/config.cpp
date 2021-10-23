@@ -5,8 +5,7 @@
 
 namespace ge {
     Config::Config(){}
-    Config::Config(Data *data): data(data){}
-    Config::Config(const char* path, Data *data): data(data){ load(path); }
+    Config::Config(const char* path){ load(path); }
 
     Config::~Config(){
         for(Group *group : groups){ delete group; }
@@ -56,10 +55,7 @@ namespace ge {
 
     void Config::get(std::string name, int &var){ var = stoi(currGroup->data[name]); }
     void Config::get(std::string name, std::string &var){ var = currGroup->data[name]; }
-
-    void Config::get(std::string name, SDL_Texture *&var){
-        var = Spritesheet::load(data, currGroup->data[name].c_str());
-    }
+    void Config::get(std::string name, SDL_Texture *&var){ var = Spritesheet::load(currGroup->data[name].c_str()); }
 
     void Config::get(std::string name, SDL_Rect &var){
         std::string data = currGroup->data[name];

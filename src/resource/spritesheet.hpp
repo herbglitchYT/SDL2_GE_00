@@ -9,7 +9,7 @@ namespace ge {
 
     class Spritesheet {
     public:
-        static SDL_Texture *load(Data *data, const char *path);
+        static SDL_Texture *load(const char *path);
 
     };
 }

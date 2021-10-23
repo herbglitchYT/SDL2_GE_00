@@ -9,6 +9,7 @@ project(ge CXX)
 add_library(ge)
 
 target_sources(ge PRIVATE
+    src/ge.cpp
     src/resource/config.cpp
     src/resource/sprite.cpp
     src/resource/spritesheet.cpp
