@@ -6,32 +6,28 @@
 namespace ge {
     class Keyboard {
     public:
-        void update(SDL_Event &event){
-            printf("%d\n", (int) event.key.keysym.sym);
-            
+        enum State { PRESSED, RELEASED };
 
-            // for(int i = 0; i < 5; i++){
-            //     if((event.button.state == SDL_PRESSED || event.motion.state == SDL_PRESSED) && event.button.button == (i + 1)){
-            //         mouse[i] = PRESSED;
-            //         continue;
-            //     }
-
-            //     if(mouse[i] == PRESSED && event.button.state == SDL_RELEASED && event.button.button == (i + 1)){
-            //         mouse[i] = RELEASED;
-            //         continue;
-            //     }
-
-            //     if(mouse[i] == RELEASED){
-            //         mouse[i] = NONE;
-            //     }
-            // }
+        Keyboard(){
+            for(unsigned int i = 0; i < 239; i++){ keyboard[i] = RELEASED; }
         }
 
+        void update(SDL_Event &event){
+            if(event.key.keysym.sym >= 239){ return; }
+
+            if(event.key.state == SDL_PRESSED || event.motion.state == SDL_PRESSED){
+                keyboard[event.key.keysym.sym] = PRESSED;
+                return;
+            }
+
+            if(event.key.state == PRESSED && event.key.state == SDL_RELEASED){
+                keyboard[event.key.keysym.sym] = RELEASED;
+            }
+        }
+
+        State operator[](int i){ return keyboard[i]; }
 
     private:
+        State keyboard[239];
     };
 }
-
-// const Uint8 *state = SDL_GetKeyboardState(nullptr);
-// printf("Mouse button: %d %d %d\n", SDL_GetMouseState(nullptr, nullptr), state[SDL_SCANCODE_1], SDL_GetModState());
-

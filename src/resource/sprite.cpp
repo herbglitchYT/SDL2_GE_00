@@ -1,4 +1,5 @@
 #include "sprite.hpp"
+#include "../ge.hpp"
 
 namespace ge {
     Sprite::Sprite(SDL_Texture *spritesheet, int xBound, int yBound, int wBound, int hBound, int xPos, int yPos): spritesheet(spritesheet), bounds(SDL_Rect {xBound, yBound, wBound, hBound}), pos(SDL_Rect {xPos, yPos, wBound, hBound}), w(bounds.w), h(bounds.h), x((float)xPos), y((float)yPos){}
@@ -10,7 +11,7 @@ namespace ge {
     void Sprite::move(SDL_FPoint pos){ x += pos.x; y = pos.y; this->pos.x = (int)x; this->pos.y = (int)y; }
     void Sprite::move(SDL_Point pos){ this->pos.x += pos.x; this->pos.y += pos.y; x = (float)this->pos.x; y = (float)this->pos.y; }
 
-    void Sprite::draw(SDL_Renderer *renderer){ SDL_RenderCopy(renderer, spritesheet, &bounds, &pos); }
+    void Sprite::draw(){ SDL_RenderCopy(ge::data->renderer, spritesheet, &bounds, &pos); }
 
     void Sprite::setPos(float x, float y){ pos.x = (int)x; pos.y = (int)y; this->x = x; this->y = y; }
     void Sprite::setPos(int x, int y){ pos.x = x; pos.y = y; this->x = (float)x; this->y = (float)y; }
@@ -23,6 +24,11 @@ namespace ge {
     void Sprite::setBounds(SDL_Point pos){bounds.x = pos.x; bounds.y = pos.y; }
 
     void Sprite::setScale(int s){ pos.w = w * s; pos.h = h * s; }
+
+    bool Sprite::collides(int x, int y, int w, int h){ return x + w > pos.x && x < pos.x + pos.w && y + h > pos.y && y < pos.y + pos.h; }
+    bool Sprite::collides(SDL_Rect bounds){ return collides(bounds.x, bounds.y, bounds.w, bounds.h); }
+    bool Sprite::collides(int x, int y){ return x > pos.x && x < pos.x + pos.w && y > pos.y && y < pos.y + pos.w; }
+    bool Sprite::collides(SDL_Point pos){ return collides(pos.x, pos.y); }
 
     SDL_Rect &Sprite::getPos(){ return pos; }
     SDL_Rect &Sprite::getBounds(){ return bounds; }

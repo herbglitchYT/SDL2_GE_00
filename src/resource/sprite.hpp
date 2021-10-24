@@ -14,7 +14,7 @@ namespace ge {
         void move(SDL_FPoint pos);
         void move(SDL_Point pos);
 
-        void draw(SDL_Renderer *renderer);
+        void draw();
 
         void setPos(float x, float y);
         void setPos(int x, int y);
@@ -27,6 +27,11 @@ namespace ge {
         void setBounds(SDL_Point pos);
 
         void setScale(int s);
+
+        bool collides(int x, int y, int w, int h);
+        bool collides(SDL_Rect bounds);
+        bool collides(int x, int y);
+        bool collides(SDL_Point pos);
 
         SDL_Rect &getPos();
         SDL_Rect &getBounds();
