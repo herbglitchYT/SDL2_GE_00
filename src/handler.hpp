@@ -21,6 +21,11 @@ namespace ge {
             for(HType *hType : hTypes){ hType->update(); }
         }
 
+        template <class HType>
+        void renderHandler(){
+            for(HType *hType : hTypes){ hType->render(); }
+        }
+
         virtual void update(){ updateHandler<HandlerType>(); }
         virtual void render(){ for(HandlerType *hType : hTypes){ hType->render(); } }
 
@@ -35,6 +40,16 @@ namespace ge {
             hTypes.erase(hTypes.begin() + hTypes.size() - 1);
         }
 
+        void remove(HandlerType *&hType){
+            if(hTypes.empty()){ return; }
+            for(unsigned int i = 0; i < hTypes.size(); i++){
+                if(hTypes.at(i) == hType){
+                    deleteQueue.push_back(hTypes.at(i));
+                    hTypes.erase(hTypes.begin() + i);
+                }
+            }
+        }
+
         void remove(int id){
             if(hTypes.empty()){ return; }
             for(unsigned int i = 0; i < hTypes.size(); i++){
@@ -46,16 +61,16 @@ namespace ge {
         }
 
         void clean(){
-            if(!deleteQueue.empty()){
-                for(HandlerType *hType : deleteQueue){ delete hType; }
-                deleteQueue.clear();
-            }
+            for(HandlerType *hType : deleteQueue){ delete hType; }
+            deleteQueue.clear();
         }
 
         void clear(){
             for(HandlerType *hType : hTypes){ delete hType; }
             hTypes.clear();
         }
+
+        int size(){ return hTypes.size(); }
 
     protected:
         std::vector<HandlerType *> hTypes;
