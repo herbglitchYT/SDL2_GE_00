@@ -10,6 +10,7 @@ add_library(ge)
 
 target_sources(ge PRIVATE
     src/ge.cpp
+    src/input/keyboard.cpp
     src/resource/config.cpp
     src/resource/sprite.cpp
     src/resource/spritesheet.cpp
@@ -17,14 +18,10 @@ target_sources(ge PRIVATE
 
 target_include_directories(ge PUBLIC src/)
 
-if(BUILD_SHARED_LIBS)
-    if(WIN32)
-        target_compile_definitions(ge PRIVATE -DDLL_EXPORT)
-    endif()
-    target_link_libraries(ge
-        PUBLIC SDL2::SDL2
-        PUBLIC SDL2_image
-    )
-else()
-    target_link_libraries(ge PUBLIC SDL2::SDL2-static)
+if(WIN32)
+    target_compile_definitions(ge PRIVATE -DDLL_EXPORT)
 endif()
+target_link_libraries(ge
+    PUBLIC SDL2::SDL2
+    PUBLIC SDL2_image
+)

@@ -2,9 +2,10 @@
 #include "../ge.hpp"
 
 namespace ge {
-    Sprite::Sprite(SDL_Texture *spritesheet, int xBound, int yBound, int wBound, int hBound, int xPos, int yPos): spritesheet(spritesheet), bounds(SDL_Rect {xBound, yBound, wBound, hBound}), pos(SDL_Rect {xPos, yPos, wBound, hBound}), w(bounds.w), h(bounds.h), x((float)xPos), y((float)yPos){}
-    Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int xPos, int yPos): spritesheet(spritesheet), bounds(bounds), pos(SDL_Rect {xPos, yPos, bounds.w, bounds.h}), w(bounds.w), h(bounds.h), x((float)xPos), y((float)yPos){}
-    Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, SDL_Point pos): spritesheet(spritesheet), bounds(bounds), pos(SDL_Rect {pos.x, pos.y, bounds.w, bounds.h}), w(bounds.w), h(bounds.h), x((float)pos.x), y((float)pos.y){}
+    Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, SDL_Point pos, int scale): spritesheet(spritesheet), bounds(bounds), pos({pos.x, pos.y, bounds.w, bounds.h}), w(bounds.w), h(bounds.h), x((float)pos.x), y((float)pos.y){ setScale(scale); }
+    Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int scale): Sprite(spritesheet, bounds, {0, 0}, scale){}
+    Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int xPos, int yPos, int scale): Sprite(spritesheet, bounds, {xPos, yPos}, scale){}
+    Sprite::Sprite(SDL_Texture *spritesheet, int xBound, int yBound, int wBound, int hBound, int xPos, int yPos, int scale): Sprite(spritesheet, {xBound, yBound, wBound, hBound}, {xPos, yPos}, scale){}
 
     void Sprite::move(float x, float y){ this->x += x; this->y += y; pos.x = (int)this->x; pos.y = (int)this->y; }
     void Sprite::move(int x, int y){ pos.x += x; pos.y += y; this->x = (float)pos.x; this->y = (float)pos.y; }
@@ -23,7 +24,10 @@ namespace ge {
     void Sprite::setBounds(int x, int y){bounds.x = x; bounds.y = y; }
     void Sprite::setBounds(SDL_Point pos){bounds.x = pos.x; bounds.y = pos.y; }
 
-    void Sprite::setScale(int s){ pos.w = w * s; pos.h = h * s; }
+    void Sprite::setScale(int s, Mode mode){
+        if(mode == Mode::PERCENT){ pos.w = w * s; pos.h = h * s; return; }
+        if(mode == Mode::PX){ pos.w = w + s; pos.h = h + s; return; }
+    }
 
     bool Sprite::collides(int x, int y, int w, int h){ return x + w > pos.x && x < pos.x + pos.w && y + h > pos.y && y < pos.y + pos.h; }
     bool Sprite::collides(SDL_Rect bounds){ return collides(bounds.x, bounds.y, bounds.w, bounds.h); }

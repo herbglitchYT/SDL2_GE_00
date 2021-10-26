@@ -5,9 +5,12 @@
 namespace ge {
     class Sprite {
     public:
-        Sprite(SDL_Texture *spritesheet, int xBound, int yBound, int wBound, int hBound, int xPos, int yPos);
-        Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int xPos, int yPos);
-        Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, SDL_Point pos);
+        enum class Mode { PERCENT, PX };
+
+        Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, SDL_Point pos, int scale = 1);
+        Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int scale = 1);
+        Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int xPos, int yPos, int scale = 1);
+        Sprite(SDL_Texture *spritesheet, int xBound, int yBound, int wBound, int hBound, int xPos = 0, int yPos = 0, int scale = 1);
 
         void move(float x, float y);
         void move(int x, int y);
@@ -26,7 +29,7 @@ namespace ge {
         void setBounds(int x, int y);
         void setBounds(SDL_Point pos);
 
-        void setScale(int s);
+        void setScale(int s, Mode mode = Mode::PERCENT);
 
         bool collides(int x, int y, int w, int h);
         bool collides(SDL_Rect bounds);
