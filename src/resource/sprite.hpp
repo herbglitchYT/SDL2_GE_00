@@ -18,6 +18,7 @@ namespace ge {
         void move(SDL_Point pos);
 
         void draw();
+        void draw(double angle);
 
         void setPos(float x, float y);
         void setPos(int x, int y);
@@ -36,13 +37,19 @@ namespace ge {
         bool collides(int x, int y);
         bool collides(SDL_Point pos);
 
+        void setCenter();
+
         SDL_Rect &getPos();
         SDL_Rect &getBounds();
+
+        SDL_Point &getCenter();
 
     private:
         SDL_Rect pos;
         SDL_Rect bounds;
         SDL_Texture *spritesheet;
+
+        SDL_Point center;
 
         int w, h;
         float x, y;

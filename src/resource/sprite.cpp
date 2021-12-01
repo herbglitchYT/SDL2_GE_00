@@ -2,7 +2,11 @@
 #include "../ge.hpp"
 
 namespace ge {
-    Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, SDL_Point pos, int scale): spritesheet(spritesheet), bounds(bounds), pos({pos.x, pos.y, bounds.w, bounds.h}), w(bounds.w), h(bounds.h), x((float)pos.x), y((float)pos.y){ setScale(scale); }
+    Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, SDL_Point pos, int scale): spritesheet(spritesheet), bounds(bounds), pos({pos.x, pos.y, bounds.w, bounds.h}), w(bounds.w), h(bounds.h), x((float)pos.x), y((float)pos.y){
+        setScale(scale);
+        setCenter();
+    }
+
     Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int scale): Sprite(spritesheet, bounds, {0, 0}, scale){}
     Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int xPos, int yPos, int scale): Sprite(spritesheet, bounds, {xPos, yPos}, scale){}
     Sprite::Sprite(SDL_Texture *spritesheet, int xBound, int yBound, int wBound, int hBound, int xPos, int yPos, int scale): Sprite(spritesheet, {xBound, yBound, wBound, hBound}, {xPos, yPos}, scale){}
@@ -13,6 +17,7 @@ namespace ge {
     void Sprite::move(SDL_Point pos){ this->pos.x += pos.x; this->pos.y += pos.y; x = (float)this->pos.x; y = (float)this->pos.y; }
 
     void Sprite::draw(){ SDL_RenderCopy(ge::data->renderer, spritesheet, &bounds, &pos); }
+    void Sprite::draw(double angle){ SDL_RenderCopyEx(ge::data->renderer, spritesheet, &bounds, &pos, angle, &center, SDL_FLIP_NONE); }
 
     void Sprite::setPos(float x, float y){ pos.x = (int)x; pos.y = (int)y; this->x = x; this->y = y; }
     void Sprite::setPos(int x, int y){ pos.x = x; pos.y = y; this->x = (float)x; this->y = (float)y; }
@@ -34,6 +39,10 @@ namespace ge {
     bool Sprite::collides(int x, int y){ return x > pos.x && x < pos.x + pos.w && y > pos.y && y < pos.y + pos.w; }
     bool Sprite::collides(SDL_Point pos){ return collides(pos.x, pos.y); }
 
+    void Sprite::setCenter(){ center = SDL_Point { pos.w / 2, pos.h / 2 }; }
+
     SDL_Rect &Sprite::getPos(){ return pos; }
     SDL_Rect &Sprite::getBounds(){ return bounds; }
+
+    SDL_Point &Sprite::getCenter(){ return center; }
 }
