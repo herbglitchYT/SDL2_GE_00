@@ -45,7 +45,7 @@ int GE::run(){
 
         ge::data->state.update();
 
-        SDL_SetRenderDrawColor(ge::data->renderer, 0x33, 0x48, 0x57, 0x00);
+        SDL_SetRenderDrawColor(ge::data->renderer, 0x1b, 0x2b, 0x3b, 0x00);
         SDL_RenderClear(ge::data->renderer);
         ge::data->state.render();
         SDL_RenderPresent(ge::data->renderer);
