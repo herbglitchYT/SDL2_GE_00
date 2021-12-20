@@ -4,7 +4,7 @@
 #include <SDL.h>
 #include <stdio.h>
 #include "handler.hpp"
-#include "object.hpp"
+#include "state.hpp"
 #include "input/mouse.hpp"
 #include "input/keyboard.hpp"
 #include "resource/resource.hpp"
@@ -16,7 +16,7 @@
 
 namespace ge {
     struct Data {
-        Handler<Object> state;
+        Handler<State> state;
         Config config;
 
         Mouse mouse;

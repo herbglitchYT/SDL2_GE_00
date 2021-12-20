@@ -179,6 +179,12 @@ namespace ge {
             std::string var = data.substr(0, data.find_first_of('='));
             std::string val = data.substr(var.size() + 1, data.find_first_of(';') - (var.size() + 1));
 
+            if(val.find("::") != std::string::npos){
+                std::string group = val.substr(0, val.find("::"));
+                val = val.substr(val.find("::") + 2);
+                
+            }
+
             if(g->data.find(var) != g->data.end()){ return 2; }
             g->data[var] = val;
 
