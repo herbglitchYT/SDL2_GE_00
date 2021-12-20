@@ -21,6 +21,7 @@ target_include_directories(ge PUBLIC src/)
 if(WIN32)
     target_compile_definitions(ge PRIVATE -DDLL_EXPORT)
 endif()
+
 target_link_libraries(ge
     PUBLIC SDL2::SDL2
     PUBLIC SDL2_image
