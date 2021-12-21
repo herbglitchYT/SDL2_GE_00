@@ -15,18 +15,11 @@ namespace ge {
             clear();
         }
 
-        template <class HType>
-        void updateHandler(){
+        virtual void update(){
             clean();
-            for(HType *hType : hTypes){ hType->update(); }
+            for(HandlerType *hType : hTypes){ hType->update(); }
         }
 
-        template <class HType>
-        void renderHandler(){
-            for(HType *hType : hTypes){ hType->render(); }
-        }
-
-        virtual void update(){ updateHandler<HandlerType>(); }
         virtual void render(){ for(HandlerType *hType : hTypes){ hType->render(); } }
 
         void add(HandlerType *hType, bool removing = false){

@@ -1,4 +1,6 @@
 #include "config.hpp"
 #include "defines.hpp"
+#include "entity.hpp"
+#include "object.hpp"
 #include "sprite.hpp"
 #include "spritesheet.hpp"

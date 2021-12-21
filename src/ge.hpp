@@ -3,8 +3,8 @@
 
 #include <SDL.h>
 #include <stdio.h>
-#include "handler.hpp"
-#include "state.hpp"
+#include "handler/state.hpp"
+#include "handler/handler.hpp"
 #include "input/mouse.hpp"
 #include "input/keyboard.hpp"
 #include "resource/resource.hpp"

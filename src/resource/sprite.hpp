@@ -1,9 +1,10 @@
 #pragma once
 
 #include <SDL.h>
+#include "object.hpp"
 
 namespace ge {
-    class Sprite {
+    class Sprite : public Object {
     public:
         enum class Mode { PERCENT, PX };
 
@@ -12,13 +13,17 @@ namespace ge {
         Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int xPos, int yPos, int scale = 1);
         Sprite(SDL_Texture *spritesheet, int xBound, int yBound, int wBound, int hBound, int xPos = 0, int yPos = 0, int scale = 1);
 
+        virtual void update() override {};
+        virtual void render() override {};
+
+        void draw(SDL_FPoint &offset) override;
+
         void move(float x, float y);
         void move(int x, int y);
         void move(SDL_FPoint pos);
         void move(SDL_Point pos);
 
-        void draw();
-        void draw(double angle);
+        void rotate(double angle);
 
         void setPos(float x, float y);
         void setPos(int x, int y);
@@ -44,7 +49,7 @@ namespace ge {
 
         SDL_Point &getCenter();
 
-    private:
+    protected:
         SDL_Rect pos;
         SDL_Rect bounds;
         SDL_Texture *spritesheet;
@@ -53,5 +58,6 @@ namespace ge {
 
         int w, h;
         float x, y;
+        double angle;
     };
 }
