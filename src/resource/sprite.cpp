@@ -13,7 +13,7 @@ namespace ge {
 
     void Sprite::draw(SDL_FPoint &offset){
         SDL_Rect offsetPos = { (int)offset.x + pos.x, (int)offset.y + pos.y, pos.w, pos.h};
-        SDL_RenderCopyEx(ge::data->renderer, spritesheet, &bounds, &pos, angle, &center, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(ge::data->renderer, spritesheet, &bounds, &offsetPos, angle, &center, SDL_FLIP_NONE);
     }
 
     void Sprite::move(float x, float y){ this->x += x; this->y += y; pos.x = (int)this->x; pos.y = (int)this->y; }
