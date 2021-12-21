@@ -12,7 +12,6 @@ target_sources(ge PRIVATE
     src/ge.cpp
     src/input/keyboard.cpp
     src/resource/config.cpp
-    src/resource/entity.cpp
     src/resource/sprite.cpp
     src/resource/spritesheet.cpp
 )

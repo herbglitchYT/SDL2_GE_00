@@ -11,7 +11,7 @@ namespace ge {
         for(Group *group : groups){ delete group; }
     }
 
-    int Config::load(const char* path){   return manageGroups(path, true);  }
+    int Config::load(  const char* path){ return manageGroups(path, true ); }
     int Config::unload(const char* path){ return manageGroups(path, false); }
 
     void Config::printGroups(){
@@ -53,7 +53,10 @@ namespace ge {
         return *this;
     }
 
-    void Config::get(std::string name, int &var){ var = stoi(currGroup->data[name]); }
+    void Config::get(std::string name, int   &var){ var = stoi(currGroup->data[name]); }
+    void Config::get(std::string name, float &var){ var = stof(currGroup->data[name]); }
+
+    void Config::get(std::string name, char *&var){ var = (char *)currGroup->data[name].c_str(); }
     void Config::get(std::string name, std::string &var){ var = currGroup->data[name]; }
     void Config::get(std::string name, SDL_Texture *&var){ var = Spritesheet::load(currGroup->data[name].c_str()); }
     void Config::get(std::string name, ColorGrid &var){ var = Spritesheet::loadColorGrid(currGroup->data[name].c_str()); }
@@ -71,6 +74,25 @@ namespace ge {
 
         var.h = stoi(data.substr(0, data.find_first_of('}')));
     }
+
+    SpriteParams Config::createSpriteParams(SDL_Texture *&texture, SpriteStrs strs){ return createSpriteParams(texture, strs, SDL_Point{0, 0}); }
+
+    SpriteParams Config::createSpriteParams(SDL_Texture *&texture, SpriteStrs strs, SDL_Point pos){
+        SpriteParams params;
+
+        params.spritesheet = texture;
+
+        setGroup(strs.group? strs.group : "");
+
+        get(strs.bounds? strs.bounds : "bounds", params.bounds);
+
+        params.pos = pos;
+
+        if(strs.scale){ get(strs.scale, params.scale); }
+
+        return params;
+    }
+
 
     bool Config::setGroup(std::string name){
         currGroup = getGroup(name);

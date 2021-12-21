@@ -1,13 +1,15 @@
 #pragma once
 
 #include <SDL.h>
-#include "../resource/object.hpp"
 #include "handler.hpp"
 
-typedef ge::Handler<ge::Object> StateHandler; 
-
 namespace ge {
-    class State : public Handler<Object> {
+    typedef struct Tile {
+        int x, y;
+        unsigned int w, h;
+    } Tile;
+
+    class State : public Handler<Tile> {
     public:
         State(){ offset = {0.0f, 0.0f}; }
         virtual ~State(){};
@@ -15,10 +17,10 @@ namespace ge {
         virtual void update(){};
 
         virtual void render(){
-            for(Object *object : hTypes){ object->draw(offset); }
+            // for(Tile *tile : hTypes){ object->draw(offset); }
         };
 
     protected:
-        SDL_FPoint offset;
+        unsigned int w, h;
     };
 }

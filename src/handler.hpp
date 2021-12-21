@@ -1,5 +1,4 @@
-#ifndef GE_HANDLER_HPP
-#define GE_HANDLER_HPP
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -43,16 +42,6 @@ namespace ge {
             }
         }
 
-        void remove(int id){
-            if(hTypes.empty()){ return; }
-            for(unsigned int i = 0; i < hTypes.size(); i++){
-                if(hTypes.at(i)->id == id){
-                    deleteQueue.push_back(hTypes.at(i));
-                    hTypes.erase(hTypes.begin() + i);
-                }
-            }
-        }
-
         void clean(){
             for(HandlerType *hType : deleteQueue){ delete hType; }
             deleteQueue.clear();
@@ -70,6 +59,3 @@ namespace ge {
         std::vector<HandlerType *> deleteQueue;
     };
 }
-
-#endif // !GE_HANDLER_HPP
-

@@ -7,6 +7,9 @@
 #include <vector>
 #include <map>
 #include "spritesheet.hpp"
+#include "sprite.hpp"
+
+#define GE_VAR_STR(var) #var, var
 
 namespace ge {
     struct Data;
@@ -30,11 +33,17 @@ namespace ge {
         Config &operator+=(const char *path);
         Config &operator+=(char *path);
 
-        void get(std::string name, int &var);
+        void get(std::string name, int   &var);
+        void get(std::string name, float &var);
+
+        void get(std::string name, char *&var);
         void get(std::string name, std::string &var);
         void get(std::string name, SDL_Texture *&var);
         void get(std::string name, ColorGrid &var);
         void get(std::string name, SDL_Rect &var);
+
+        SpriteParams createSpriteParams(SDL_Texture *&texture, SpriteStrs strs);
+        SpriteParams createSpriteParams(SDL_Texture *&texture, SpriteStrs strs, SDL_Point pos);
 
         bool setGroup(std::string name);
 

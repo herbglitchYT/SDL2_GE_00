@@ -17,4 +17,6 @@ namespace ge {
             keyboard[event.key.keysym.sym] = RELEASED;
         }
     }
+
+    bool Keyboard::operator[](int key){ return keyboard[key] == State::PRESSED; }
 }

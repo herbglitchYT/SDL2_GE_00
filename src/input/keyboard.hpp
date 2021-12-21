@@ -12,7 +12,7 @@ namespace ge {
 
         void update(SDL_Event &event);
 
-        State operator[](int i){ return keyboard[i]; }
+        bool operator[](int i);
 
     private:
         State keyboard[239];
