@@ -5,14 +5,15 @@
 
 namespace ge {
     typedef struct EntityStrs {
-        char *bounds;
-        char *scale;
-        char *group;
+        const char *bounds = nullptr;
+        const char *scale  = nullptr;
+        const char *group  = nullptr;
     } EntityStrs;
 
     class Entity : public Sprite {
     public:
-        Entity(SDL_Textue *spritesheet, EntityStrs strs = EntityStrs {"bounds", "", ""}, SDL_Point pos = SDL_Point { 0, 0 });
+        Entity(SDL_Texture *spritesheet, EntityStrs strs);
+        Entity(SDL_Texture *spritesheet, EntityStrs strs, SDL_Point pos);
         virtual ~Entity();
 
     protected:

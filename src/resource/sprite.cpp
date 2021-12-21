@@ -13,7 +13,6 @@ namespace ge {
 
     void Sprite::draw(SDL_FPoint &offset){
         SDL_Rect offsetPos = { (int)offset.x + pos.x, (int)offset.y + pos.y, pos.w, pos.h};
-        if(!collides(ge::data->windowSize)){ return; }
         SDL_RenderCopyEx(ge::data->renderer, spritesheet, &bounds, &pos, angle, &center, SDL_FLIP_NONE);
     }
 
