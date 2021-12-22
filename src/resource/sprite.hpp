@@ -21,6 +21,8 @@ namespace ge {
     public:
         enum class Mode { PERCENT, PX };
 
+        Sprite(){}
+
         Sprite(SpriteParams *params);
         Sprite(SpriteParams  params);
         Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int scale = 1);
@@ -43,7 +45,7 @@ namespace ge {
         void move(float  x, float  y);
         void move(SDL_FPoint pos);
 
-        void moveTo(SDL_FPoint coord, float speed);
+        void moveTo(SDL_Point coord, float speed);
 
         void setPos(int *x, int *y);
         void setPos(int  x, int  y);

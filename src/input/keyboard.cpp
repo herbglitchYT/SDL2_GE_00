@@ -2,7 +2,7 @@
 
 namespace ge {
     Keyboard::Keyboard(){
-        for(unsigned int i = 0; i < 239; i++){ keyboard[i] = RELEASED; }
+        for(unsigned int i = 0; i < 239; i++){ keyboard[i] = NONE; }
     }
 
     void Keyboard::update(SDL_Event &event){
@@ -13,10 +13,20 @@ namespace ge {
             return;
         }
 
-        if(event.key.state == PRESSED && event.key.state == SDL_RELEASED){
+        if(keyboard[event.key.keysym.sym] == State::PRESSED){
             keyboard[event.key.keysym.sym] = RELEASED;
+            released.push(event.key.keysym.sym);
+            return;
+        }
+
+        while(!released.empty()){
+            keyboard[released.top()] = NONE;
+            released.pop();
         }
     }
 
-    bool Keyboard::operator[](int key){ return keyboard[key] == State::PRESSED; }
+    bool Keyboard::getPress(  int key){ return keyboard[key] == State::PRESSED;  }
+    bool Keyboard::getRelease(int key){ return keyboard[key] == State::RELEASED; }
+
+    Keyboard::State Keyboard::operator[](int key){ return keyboard[key]; }
 }

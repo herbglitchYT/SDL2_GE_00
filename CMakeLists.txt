@@ -14,6 +14,7 @@ target_sources(ge PRIVATE
     src/resource/config.cpp
     src/resource/sprite.cpp
     src/resource/spritesheet.cpp
+    src/state/grid.cpp
 )
 
 target_include_directories(ge PUBLIC src/)

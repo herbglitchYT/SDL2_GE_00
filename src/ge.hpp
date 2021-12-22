@@ -8,8 +8,8 @@
 #include "input/keyboard.hpp"
 #include "resource/resource.hpp"
 #include "state/state.hpp"
-#include "state/flat.hpp"
-// #include "state/state.hpp"
+#include "state/surface.hpp"
+#include "state/grid.hpp"
 
 #define GE_MAIN(initState, width, height, title) int main(int argc, char *argv[]){\
     int ret = GE::init(width, height, title); if(ret){ return ret;}\

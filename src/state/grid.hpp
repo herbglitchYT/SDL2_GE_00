@@ -1,26 +1,28 @@
 #pragma once
 
-#include <SDL.h>
-#include "handler.hpp"
+#include "surface.hpp"
+#include "../resource/sprite.hpp"
 
 namespace ge {
-    typedef struct Tile {
-        int x, y;
-        unsigned int w, h;
-    } Tile;
-
-    class State : public Handler<Tile> {
+    class Grid : public Surface {
     public:
-        State(){ offset = {0.0f, 0.0f}; }
-        virtual ~State(){};
+        Grid(SDL_FPoint offset, SDL_Point tileSize);
 
-        virtual void update(){};
+        Grid();
+        Grid(SDL_FPoint offset);
+        Grid(SDL_Point tileSize);
 
-        virtual void render(){
-            // for(Tile *tile : hTypes){ object->draw(offset); }
-        };
+        Grid(int tileSize);
+        Grid(SDL_FPoint offset, int tileSize);
+
+        virtual ~Grid();
+
+        SDL_Point gridPoint(SDL_Point *point);
+        SDL_Point gridPoint(SDL_Point  point);
 
     protected:
-        unsigned int w, h;
+        SDL_Point tileSize, surfaceSize;
+
+        Sprite *positions;
     };
 }

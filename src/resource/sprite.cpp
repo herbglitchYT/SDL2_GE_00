@@ -1,5 +1,6 @@
 #include "sprite.hpp"
 #include "../ge.hpp"
+#include <cmath>
 
 namespace ge {
     Sprite::Sprite(SpriteParams *params): spritesheet(params->spritesheet), bounds(params->bounds), pos({params->pos.x, params->pos.y, params->bounds.w, params->bounds.h}), w(params->bounds.w), h(params->bounds.h), x((float)params->pos.x), y((float)params->pos.y), angle(0.0){ setScale(params->scale); setCenter(); }
@@ -22,22 +23,13 @@ namespace ge {
     void Sprite::move(int  x, int  y){ move(&x, &y); }
     void Sprite::move(SDL_Point pos) { move(&pos.x, &pos.y); }
 
-    void Sprite::move(float *x, float *y){ this->x += *x; this->y += *y; pos.x = (int)this->x; pos.y = (int)this->y; }
+    void Sprite::move(float *x, float *y){ this->x += *x * ge::data->dt; this->y += *y; pos.x = (int)this->x; pos.y = (int)this->y; }
     void Sprite::move(float  x, float  y){ move(&x,     &y    ); }
     void Sprite::move(SDL_FPoint pos)    { move(&pos.x, &pos.y); }
 
-    void Sprite::moveTo(SDL_FPoint coord, float speed){
-        if(pos.x == coord.x && pos.y == coord.y){ return; }
-        if(coord.x - pos.x){
-            pos.x += (coord.x - pos.x > 0)?
-                ((coord.x - pos.x <         speed * ge::data->dt)? coord.x - pos.x :         speed * ge::data->dt):
-                ((coord.x - pos.x > -1.0f * speed * ge::data->dt)? coord.x - pos.x : -1.0f * speed * ge::data->dt);
-        }
-        if(coord.y - pos.y){
-            pos.y += (coord.y - pos.y > 0)?
-                ((coord.y - pos.y <         speed * ge::data->dt)? coord.y - pos.y :         speed * ge::data->dt):
-                ((coord.y - pos.y > -1.0f * speed * ge::data->dt)? coord.y - pos.y : -1.0f * speed * ge::data->dt);
-        }
+    void Sprite::moveTo(SDL_Point coord, float speed){
+        float angle = atan2(coord.y - pos.y, coord.x - pos.x);
+        move(speed * ge::data->dt * cosf(angle), speed * sinf(angle));
     }
 
     void Sprite::setPos(int *x, int *y){ pos.x = *x; pos.y = *y; this->x = (float)*x; this->y = (float)*y; }
