@@ -6,7 +6,7 @@ namespace ge {
         surfaceSize.x = (ge::data->windowSize.w / tileSize.x) + (ge::data->windowSize.w % tileSize.x)? 1 : 0;
         surfaceSize.y = (ge::data->windowSize.h / tileSize.y) + (ge::data->windowSize.h % tileSize.y)? 1 : 0;
     
-        positions = new Sprite[surfaceSize.x * surfaceSize.y];
+        positions = new Sprite *[surfaceSize.x * surfaceSize.y];
     }
 
     Grid::Grid():                   Grid({0.0f, 0.0f}, {1, 1}  ){}

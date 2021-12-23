@@ -59,7 +59,7 @@ namespace ge {
     void Config::get(std::string name, char *&var){ var = (char *)currGroup->data[name].c_str(); }
     void Config::get(std::string name, std::string &var){ var = currGroup->data[name]; }
     void Config::get(std::string name, SDL_Texture *&var){ var = Spritesheet::load(currGroup->data[name].c_str()); }
-    void Config::get(std::string name, ColorGrid &var){ var = Spritesheet::loadColorGrid(currGroup->data[name].c_str()); }
+    void Config::get(std::string name, ColorGrid *&var){ var = Spritesheet::loadColorGrid(currGroup->data[name].c_str()); }
 
     void Config::get(std::string name, SDL_Rect &var){
         std::string data = currGroup->data[name];

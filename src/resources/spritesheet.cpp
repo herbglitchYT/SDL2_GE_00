@@ -21,7 +21,7 @@ namespace ge {
         SDL_Surface *surface = IMG_Load(path);
         if(!surface){ printf("Error: reading png '%s'\nSDL_Image Error: %s", path, IMG_GetError()); }
 
-        ColorGrid *grid = new ColorGrid { new uint32_t[surface->w * surface->h], surface->w, surface->h };
+        ColorGrid *grid = new ColorGrid { new uint32_t[surface->w * surface->h], (uint32_t)surface->w, (uint32_t)surface->h };
 
         for(int i = 0; i < surface->w * surface->h; i++){
             SDL_Color color = surface->format->palette->colors[*((uint8_t *)surface->pixels + i)];

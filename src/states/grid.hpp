@@ -1,7 +1,7 @@
 #pragma once
 
 #include "surface.hpp"
-#include "../entity/sprite.hpp"
+#include "../entities/sprite.hpp"
 
 namespace ge {
     class Grid : public Surface {
@@ -23,6 +23,6 @@ namespace ge {
     protected:
         SDL_Point tileSize, surfaceSize;
 
-        Sprite *positions;
+        Sprite **positions;
     };
 }

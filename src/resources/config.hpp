@@ -39,7 +39,7 @@ namespace ge {
         void get(std::string name, char *&var);
         void get(std::string name, std::string &var);
         void get(std::string name, SDL_Texture *&var);
-        void get(std::string name, ColorGrid &var);
+        void get(std::string name, ColorGrid *&var);
         void get(std::string name, SDL_Rect &var);
 
         SpriteParams createSpriteParams(SDL_Texture *&texture, SpriteStrs strs);

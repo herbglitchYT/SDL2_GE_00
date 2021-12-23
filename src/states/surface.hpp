@@ -1,10 +1,10 @@
 #pragma once
 
 #include "state.hpp"
-#include "../entity/sprite.hpp"
+#include "../entities/entity.hpp"
 
 namespace ge {
-    class Surface : public State, public Handler<Sprite> {
+    class Surface : public State, public Handler<Entity> {
     public:
         Surface(): offset({0.0f, 0.0f}){}
         Surface(SDL_FPoint offset): offset(offset){}
@@ -13,7 +13,7 @@ namespace ge {
         virtual void update(){};
 
         virtual void render(){
-            for(Sprite *object : hTypes){ object->render(offset); }
+            for(Entity *entity : hTypes){ entity->render(offset); }
         };
 
     protected:

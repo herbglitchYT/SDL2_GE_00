@@ -38,11 +38,9 @@ namespace ge {
 
         void setScale(int s, ScaleMode mode = ScaleMode::PERCENT) override;
 
-        bool collides(int *x, int *y, int *w, int *h);
-        bool collides(int  x, int  y, int  w, int  h);
-        bool collides(SDL_Rect bounds);
+        bool collides(SDL_Rect *bounds);
+        bool collides(SDL_Rect  bounds);
 
-        bool collides(int *x, int *y);
         bool collides(int  x, int  y);
         bool collides(SDL_Point pos);
 

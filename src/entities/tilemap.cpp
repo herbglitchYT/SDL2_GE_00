@@ -14,6 +14,11 @@ namespace ge {
         // SDL_Rect offsetPos = { (int)offset.x + pos.x, (int)offset.y + pos.y, pos.w, pos.h};
         // SDL_RenderCopyEx(ge::data->renderer, spritesheet, &bounds, &offsetPos, angle, &center, SDL_FLIP_NONE);
     }
+
+    void TileMap::setScale(int s, ScaleMode mode){
+
+    }
+
 }
 
 

@@ -28,13 +28,11 @@ namespace ge {
         if(mode == ScaleMode::PX)     { pos.w = w + s; pos.h = h + s; return; }
     }
 
-    bool Sprite::collides(int *x, int *y, int *w, int *h){ return *x + *w >= pos.x && *x <= pos.x + pos.w && *y + *h <= pos.y && *y >= pos.y + pos.h; }
-    bool Sprite::collides(int  x, int  y, int  w, int  h){ return collides(&x,        &y,        &w,        &h       ); }
-    bool Sprite::collides(SDL_Rect bounds)               { return collides(&bounds.x, &bounds.y, &bounds.w, &bounds.h); }
+    bool Sprite::collides(SDL_Rect *bounds) { return SDL_HasIntersection(&pos, bounds); }
+    bool Sprite::collides(SDL_Rect  bounds) { return collides(&bounds); }
 
-    bool Sprite::collides(int *x, int *y){ return *x >= pos.x && *x <= pos.x + pos.w && *y >= pos.y && *y <= pos.y + pos.w; }
-    bool Sprite::collides(int  x, int  y){ return collides(&x,     &y    ); }
-    bool Sprite::collides(SDL_Point pos) { return collides(&pos.x, &pos.y); }
+    bool Sprite::collides(int  x, int  y){ return collides({x, y, 0, 0}); }
+    bool Sprite::collides(SDL_Point pos) { return collides(pos.x, pos.y); }
 
     void Sprite::setCenter(int x, int y){ center = { x,         y         }; }
     void Sprite::setCenter()            { center = { pos.w / 2, pos.h / 2 }; }
