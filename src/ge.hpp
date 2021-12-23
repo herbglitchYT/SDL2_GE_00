@@ -2,14 +2,12 @@
 #define GE_HPP
 
 #include <SDL.h>
-#include <stdio.h>
 #include "handler.hpp"
-#include "input/mouse.hpp"
-#include "input/keyboard.hpp"
-#include "resource/resource.hpp"
-#include "state/state.hpp"
-#include "state/surface.hpp"
-#include "state/grid.hpp"
+
+#include "states/state.hpp"
+#include "resources/config.hpp"
+#include "inputs/keyboard.hpp"
+#include "inputs/mouse.hpp"
 
 #define GE_MAIN(initState, width, height, title) int main(int argc, char *argv[]){\
     int ret = GE::init(width, height, title); if(ret){ return ret;}\
@@ -21,8 +19,8 @@ namespace ge {
         Handler<State> state;
         Config config;
 
-        Mouse mouse;
         Keyboard keyboard;
+        Mouse mouse;
 
         SDL_Window *window;
         SDL_Rect windowSize;

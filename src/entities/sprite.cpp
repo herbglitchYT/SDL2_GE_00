@@ -1,9 +1,8 @@
 #include "sprite.hpp"
 #include "../ge.hpp"
-#include <cmath>
 
 namespace ge {
-    Sprite::Sprite(SpriteParams *params): spritesheet(params->spritesheet), bounds(params->bounds), pos({params->pos.x, params->pos.y, params->bounds.w, params->bounds.h}), w(params->bounds.w), h(params->bounds.h), x((float)params->pos.x), y((float)params->pos.y), angle(0.0){ setScale(params->scale); setCenter(); }
+    Sprite::Sprite(SpriteParams *params): Entity(params->spritesheet, {params->pos.x, params->pos.y, params->bounds.w, params->bounds.h}), bounds(params->bounds), w(params->bounds.w), h(params->bounds.h), angle(0.0){ setScale(params->scale); setCenter(); }
     Sprite::Sprite(SpriteParams  params): Sprite(&params){}
     Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int scale):                                                    Sprite(SpriteParams {spritesheet, bounds,                           {0,    0   }, scale}){}
     Sprite::Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, SDL_Point pos, int scale):                                     Sprite(SpriteParams {spritesheet, bounds,                           pos,          scale}){}
@@ -19,35 +18,14 @@ namespace ge {
 
     void Sprite::rotate(double angle){ this->angle = angle; }
 
-    void Sprite::move(int *x, int *y){ pos.x += *x; pos.y += *y; this->x = (float)pos.x; this->y = (float)pos.y; }
-    void Sprite::move(int  x, int  y){ move(&x, &y); }
-    void Sprite::move(SDL_Point pos) { move(&pos.x, &pos.y); }
-
-    void Sprite::move(float *x, float *y){ this->x += *x * ge::data->dt; this->y += *y; pos.x = (int)this->x; pos.y = (int)this->y; }
-    void Sprite::move(float  x, float  y){ move(&x,     &y    ); }
-    void Sprite::move(SDL_FPoint pos)    { move(&pos.x, &pos.y); }
-
-    void Sprite::moveTo(SDL_Point coord, float speed){
-        float angle = atan2(coord.y - pos.y, coord.x - pos.x);
-        move(speed * ge::data->dt * cosf(angle), speed * sinf(angle));
-    }
-
-    void Sprite::setPos(int *x, int *y){ pos.x = *x; pos.y = *y; this->x = (float)*x; this->y = (float)*y; }
-    void Sprite::setPos(int  x, int  y){ setPos(&x,     &y    ); }
-    void Sprite::setPos(SDL_Point pos) { setPos(&pos.x, &pos.y); }
-
-    void Sprite::setPos(float *x, float *y){ pos.x = (int)*x; pos.y = (int)*y; this->x = *x; this->y = *y; }
-    void Sprite::setPos(float  x, float  y){ setPos(&x,     &y    ); }
-    void Sprite::setPos(SDL_FPoint pos)    { setPos(&pos.x, &pos.y); }
-
     void Sprite::setBounds(int x, int y, int w, int h){ bounds = {x, y, w, h}; }
     void Sprite::setBounds(SDL_Rect bounds){ this->bounds = bounds; }
     void Sprite::setBounds(int x, int y){bounds.x = x; bounds.y = y; }
     void Sprite::setBounds(SDL_Point pos){bounds.x = pos.x; bounds.y = pos.y; }
 
-    void Sprite::setScale(int s, Mode mode){
-        if(mode == Mode::PERCENT){ pos.w = w * s; pos.h = h * s; return; }
-        if(mode == Mode::PX)     { pos.w = w + s; pos.h = h + s; return; }
+    void Sprite::setScale(int s, ScaleMode mode){
+        if(mode == ScaleMode::PERCENT){ pos.w = w * s; pos.h = h * s; return; }
+        if(mode == ScaleMode::PX)     { pos.w = w + s; pos.h = h + s; return; }
     }
 
     bool Sprite::collides(int *x, int *y, int *w, int *h){ return *x + *w >= pos.x && *x <= pos.x + pos.w && *y + *h <= pos.y && *y >= pos.y + pos.h; }

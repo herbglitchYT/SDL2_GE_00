@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SDL.h>
-#include "object.hpp"
+#include "entity.hpp"
 
 namespace ge {
     typedef struct SpriteParams {
@@ -17,12 +17,8 @@ namespace ge {
         const char *group  = nullptr;
     } SpriteStrs;
 
-    class Sprite {
+    class Sprite : public Entity {
     public:
-        enum class Mode { PERCENT, PX };
-
-        Sprite(){}
-
         Sprite(SpriteParams *params);
         Sprite(SpriteParams  params);
         Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int scale = 1);
@@ -30,37 +26,17 @@ namespace ge {
         Sprite(SDL_Texture *spritesheet, SDL_Rect bounds, int xPos, int yPos, int scale = 1);
         Sprite(SDL_Texture *spritesheet, int xBound, int yBound, int wBound, int hBound, int xPos = 0, int yPos = 0, int scale = 1);
 
-        virtual void update(){}
-
-        void render();
-        void render(SDL_FPoint &offset);
+        void render() override;
+        void render(SDL_FPoint &offset) override;
 
         void rotate(double angle);
-
-        void move(int *x, int *y);
-        void move(int  x, int  y);
-        void move(SDL_Point pos);
-
-        void move(float *x, float *y);
-        void move(float  x, float  y);
-        void move(SDL_FPoint pos);
-
-        void moveTo(SDL_Point coord, float speed);
-
-        void setPos(int *x, int *y);
-        void setPos(int  x, int  y);
-        void setPos(SDL_Point pos);
-
-        void setPos(float *x, float *y);
-        void setPos(float  x, float  y);
-        void setPos(SDL_FPoint pos);
 
         void setBounds(int x, int y, int w, int h);
         void setBounds(SDL_Rect bounds);
         void setBounds(int x, int y);
         void setBounds(SDL_Point pos);
 
-        void setScale(int s, Mode mode = Mode::PERCENT);
+        void setScale(int s, ScaleMode mode = ScaleMode::PERCENT) override;
 
         bool collides(int *x, int *y, int *w, int *h);
         bool collides(int  x, int  y, int  w, int  h);
@@ -79,15 +55,11 @@ namespace ge {
         SDL_Point &getCenter();
 
     protected:
-        SDL_Texture *spritesheet;
-
-        SDL_Rect pos;
         SDL_Rect bounds;
 
         SDL_Point center;
+        double angle;
 
         int w, h;
-        float x, y;
-        double angle;
     };
 }

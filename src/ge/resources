@@ -1,0 +1,2 @@
+#include "../resources/config.hpp"
+#include "../resources/spritesheet.hpp"

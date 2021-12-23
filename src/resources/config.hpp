@@ -7,7 +7,7 @@
 #include <vector>
 #include <map>
 #include "spritesheet.hpp"
-#include "sprite.hpp"
+#include "../entities/sprite.hpp"
 
 #define GE_VAR_STR(var) #var, var
 

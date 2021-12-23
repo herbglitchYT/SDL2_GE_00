@@ -1,5 +1,7 @@
 #include "ge.hpp"
 
+#include <stdio.h>
+
 ge::Data *ge::data;
 
 int GE::init(int width, int height, const char *title){

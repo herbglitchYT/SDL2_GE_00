@@ -1,7 +1,7 @@
 #pragma once
 
 #include "surface.hpp"
-#include "../resource/sprite.hpp"
+#include "../entity/sprite.hpp"
 
 namespace ge {
     class Grid : public Surface {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "state.hpp"
-#include "../resource/sprite.hpp"
+#include "../entity/sprite.hpp"
 
 namespace ge {
     class Surface : public State, public Handler<Sprite> {
