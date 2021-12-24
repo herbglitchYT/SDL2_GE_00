@@ -8,7 +8,7 @@ namespace ge {
     void Keyboard::update(SDL_Event &event){
         if(event.key.keysym.sym >= 239 || event.key.keysym.sym < 0){ return; }
 
-        if(event.key.state == SDL_PRESSED || event.motion.state == SDL_PRESSED){
+        if(event.key.state == SDL_PRESSED){
             keyboard[event.key.keysym.sym] = PRESSED;
             return;
         }
