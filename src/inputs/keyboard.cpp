@@ -6,6 +6,11 @@ namespace ge {
     }
 
     void Keyboard::update(SDL_Event &event){
+        while(!released.empty()){
+            keyboard[released.top()] = NONE;
+            released.pop();
+        }
+
         if(event.key.keysym.sym >= 239 || event.key.keysym.sym < 0){ return; }
 
         if(event.key.state == SDL_PRESSED){
@@ -17,11 +22,6 @@ namespace ge {
             keyboard[event.key.keysym.sym] = RELEASED;
             released.push(event.key.keysym.sym);
             return;
-        }
-
-        while(!released.empty()){
-            keyboard[released.top()] = NONE;
-            released.pop();
         }
     }
 
