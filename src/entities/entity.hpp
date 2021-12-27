@@ -4,20 +4,21 @@
 #include <stdint.h>
 
 namespace ge {
-    enum class ScaleMode { PERCENT, PX };
-
     class Entity {
     public:
-        Entity(SDL_Texture *spritesheet, SDL_Rect pos);
+        Entity();
+        Entity(SDL_FPoint pos);
+        Entity(SDL_Point pos);
+        Entity(SDL_Rect bounds);
+        Entity(SDL_Rect bounds, SDL_FPoint pos);
+        Entity(SDL_Rect bounds, SDL_Point pos);
 
-        virtual ~Entity(){};
+        virtual ~Entity();
 
-        virtual void update(){}
+        virtual void update();
 
         virtual void render() = 0;
         virtual void render(SDL_FPoint &offset) = 0;
-
-        virtual void setScale(int s, ScaleMode mode) = 0;
 
         virtual void move(float *x, float *y);
         virtual void move(float  x, float  y);
@@ -37,11 +38,11 @@ namespace ge {
         virtual void setPos(float  x, float  y);
         virtual void setPos(SDL_FPoint pos);
 
+        SDL_Rect   &getBounds();
+        SDL_FPoint &getPos();
+
     protected:
-        SDL_Texture *spritesheet;
-
-        SDL_Rect pos;
-
-        float x, y;
+        SDL_Rect bounds;
+        SDL_FPoint pos;
     };
 }

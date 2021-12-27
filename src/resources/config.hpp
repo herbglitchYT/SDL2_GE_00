@@ -1,74 +1,97 @@
 #pragma once
 
 #include <SDL.h>
-#include <string>
-#include <algorithm>
-#include <fstream>
-#include <vector>
 #include <map>
+#include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "spritesheet.hpp"
 #include "../entities/sprite.hpp"
+#include "../types/config.h"
+#include "../types/types.h"
 
 #define GE_VAR_STR(var) #var, var
 
-namespace ge {
-    struct Data;
+#define GE_CONFIG_HOME "./res/"
 
+namespace ge {
     class Config {
     public:
-        Config();
-        Config(const char* path);
+        Config(const char *urlHome = "./res/");
         ~Config();
 
         int load(const char* path);
         int unload(const char* path);
 
-        void printGroups();
+        // void printGroups();
 
-        Config &operator=(std::string path);
-        Config &operator=(const char *path);
-        Config &operator=(char *path);
+        // void get(std::string name, int       &var);
+        // void get(std::string name, int      *&var);
+        // void get(std::string name, float     &var);
+        // void get(std::string name, float    *&var);
+        // void get(std::string name, uint32_t  &var);
+        // void get(std::string name, uint32_t *&var);
 
-        Config &operator+=(std::string path);
-        Config &operator+=(const char *path);
-        Config &operator+=(char *path);
+        // void get(std::string name, char *&var);
+        // void get(std::string name, std::string &var);
+        void get(const char *name, GE_Sheet  *&var);
+        void get(const char *name, GE_Bounds *&var);
+        void get(const char *name, GE_Sprite *&var);
+        // void get(std::string name, GE_ColorGrid *&var);
+        // void get(std::string name, SDL_Rect &var);
+        // void get(std::string name, Sprite *&var);
 
-        void get(std::string name, int   &var);
-        void get(std::string name, float &var);
-
-        void get(std::string name, char *&var);
-        void get(std::string name, std::string &var);
-        void get(std::string name, SDL_Texture *&var);
-        void get(std::string name, ColorGrid *&var);
-        void get(std::string name, SDL_Rect &var);
-
-        SpriteParams createSpriteParams(SDL_Texture *&texture, SpriteStrs strs);
-        SpriteParams createSpriteParams(SDL_Texture *&texture, SpriteStrs strs, SDL_Point pos);
-
-        bool setGroup(std::string name);
+        bool setGroup(const char *name);
 
     private:
         struct Group {
-            std::string name;
-            std::map<std::string, std::string> data;
+            const char *name;
+            std::map<const char *, void *, GE_Keycmp> data;
 
-            Group(std::string name): name(name){}
+            Group(const char *name): name(name){}
         };
 
-        Group *getGroup(std::string name);
         int removeGroup(Group *g);
 
-        int manageGroups(const char* path, bool load);
-        int manageGroups(std::string &data, std::string path, bool load);
+        int readFile(const char *path, bool load);
 
-        int comment(std::string &data, unsigned int &i, bool multi);
-        int hash(std::string &data, unsigned int &i, std::string path);
-        int group(std::string name, std::string &data);
-        int ungroup(std::string name, std::string &data);
+        int handleKeyVal(Group *group, GE_KeyVal *kval, bool &load);
 
-        std::vector<Group *> groups;
+        int parse(uint32_t *i, char *data, bool load, char *groupName = (char *)"");
+
+        static char *url(char *homePath, char *path);
+
+        static int find(char *data, uint32_t *len, char match);
+        static int find(char *data, uint32_t *len, char *match);
+
+        static int strip(uint32_t *i, char *data, char  match);
+        static int strip(uint32_t *i, char *data, char *match);
+        static int strip(uint32_t *i, char *data, char **val, char  match, bool removeMatch = false);
+        static int strip(uint32_t *i, char *data, char **val, char *match, bool removeMatch = false);
+
+        static int splitVar(uint32_t *i, char *data, char **name, char **val);
+        static int splitVar(uint32_t *i, char *data, char **utype, char **name, char **val);
+
+        static int comment  (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int hash     (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int uintF    (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int intF     (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int floatF   (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int scale    (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int color    (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int sheet    (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int bounds   (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int tile     (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int sprite   (uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+        static int colorGrid(uint32_t *i, const char *path, char *data, GE_KeyVal **val);
+
+        std::map<const char *, Group *, GE_Keycmp> groups;
+        GE_Keyword *keywords;
+        uint32_t keywordSize;
+
         Group *currGroup;
-        Data *data;
+        char *homePath;
     };
 }
 

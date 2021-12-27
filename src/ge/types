@@ -1,2 +1,1 @@
-#include "../types/colorgrid.hpp"
-#include "../types/tile.hpp"
+#include "../types/types.h"

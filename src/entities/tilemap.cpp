@@ -1,25 +1,30 @@
 #include "tilemap.hpp"
-#include "../ge.hpp"
+// #include "../ge.hpp"
+// #include <stdint.h>
 
-namespace ge {
-    TileMap::TileMap(SDL_Texture *spritesheet, ColorGrid &colorGrid, Tile tile, SDL_Point pos, int scale): Entity(spritesheet, {pos.x, pos.y, (int)tile.w, (int)tile.h}), colorGrid(colorGrid), tile(tile){
-    }
+// namespace ge {
+//     TileMap::TileMap(SDL_Texture *spritesheet, GE_ColorGrid &colorGrid, GE_Tile tile, SDL_Point *pos, int scale): Entity(pos), colorGrid(colorGrid), tile(tile){
+//         for(uint32_t y = 0; y < colorGrid.h; y++){
+//             for(uint32_t x = 0; x < colorGrid.w; x++){
+                
+//             }
+//         }
+//     }
 
-    void TileMap::render(){
-        // SDL_Rect offset = { 0 , 0 };
-        // render(offset);
-    }
+//     void TileMap::render(){
+//         // SDL_Rect offset = { 0 , 0 };
+//         // render(offset);
+//     }
 
-    void TileMap::render(SDL_FPoint &offset){
-        // SDL_Rect offsetPos = { (int)offset.x + pos.x, (int)offset.y + pos.y, pos.w, pos.h};
-        // SDL_RenderCopyEx(ge::data->renderer, spritesheet, &bounds, &offsetPos, angle, &center, SDL_FLIP_NONE);
-    }
+//     void TileMap::render(SDL_FPoint &offset){
+//         // SDL_Rect offsetPos = { (int)offset.x + pos.x, (int)offset.y + pos.y, pos.w, pos.h};
+//         // SDL_RenderCopyEx(ge::data->renderer, spritesheet, &bounds, &offsetPos, angle, &center, SDL_FLIP_NONE);
+//     }
 
-    void TileMap::setScale(int s, ScaleMode mode){
+//     // void TileMap::setScale(int s, ScaleMode mode){
 
-    }
-
-}
+//     // }
+// }
 
 
 /*
