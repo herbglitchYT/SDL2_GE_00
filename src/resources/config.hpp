@@ -72,6 +72,8 @@ namespace ge {
         static int strip(uint32_t *i, char *data, char **val, char  match, bool removeMatch = false);
         static int strip(uint32_t *i, char *data, char **val, char *match, bool removeMatch = false);
 
+        static int removeWhitespace(char **val);
+
         static int splitVar(uint32_t *i, char *data, char **name, char **val);
         static int splitVar(uint32_t *i, char *data, char **utype, char **name, char **val);
 

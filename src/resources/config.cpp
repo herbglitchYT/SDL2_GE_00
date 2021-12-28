@@ -26,11 +26,11 @@ namespace ge {
     int Config::load(  const char* path){ return readFile(path, true ); }
     int Config::unload(const char* path){ return readFile(path, false); }
 
-    void Config::get(const char *name, GE_Scale     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Scale)     ? (GE_Scale     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_Bounds    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Bounds)    ? (GE_Bounds    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Scale     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_SCALE)     ? (GE_Scale     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Bounds    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_BOUNDS)    ? (GE_Bounds    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
     void Config::get(const char *name, GE_Sprite    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Sprite)    ? (GE_Sprite    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_Sheet     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Sheet)     ? (GE_Sheet     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_ColorGrid *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_ColorGrid) ? (GE_ColorGrid *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Sheet     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_SHEET)     ? (GE_Sheet     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_ColorGrid *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_COLOR_GRID) ? (GE_ColorGrid *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
 
     bool Config::setGroup(const char *name){
         currGroup = groups[name];
@@ -65,8 +65,9 @@ namespace ge {
     }
 
     int Config::handleKeyVal(Group *group, GE_KeyVal *kval, bool &load){
-        if(*((uint8_t *)kval->val) == GE_Type_None){
-            if(*(((uint8_t *)kval->val) + 1) == GE_PreDef_include){ return readFile((char *)kval->key, load); }
+        if(((GE_TypeVoid *)kval->val)->id == GE_TYPE_NONE){
+            if(((GE_TypeVoid *)((GE_TypeVoid *)kval->val)->data)->id == GE_PRE_DEF_COMMENT){ return 0; }
+            if(((GE_TypeVoid *)((GE_TypeVoid *)kval->val)->data)->id == GE_PRE_DEF_INCLUDE){ return readFile((char *)((GE_TypeVoid *)((GE_TypeVoid *)kval->val)->data)->data, load); }
             return -4;
         }
         printf("key: |%s|\n", kval->key);
@@ -78,7 +79,8 @@ namespace ge {
         Group *group = (groups.find(groupName) != groups.end())? groups[groupName] : new Group(groupName);
 
         while(*i < (uint32_t)strlen(data)){
-            if(data[*i] == ' ' || data[*i] == '\n' || data[*i] == '\r' || data[*i] == '\t'){ i++; continue; }
+            printf("~~~%u, %u~~~\n", *i, strlen(data));
+            if(data[*i] == ' ' || data[*i] == '\n' || data[*i] == '\r' || data[*i] == '\t'){ ++*i; continue; }
 
             if(data[*i] == '}'){
                 groups[groupName] = group;
@@ -100,6 +102,7 @@ namespace ge {
                 if(err){ return err; }
             }
 
+            printf("%c%c%c%c (%u))", data[*i], data[*i + 1], data[*i + 2], data[*i + 3], *i);
             for(uint32_t index = 0; index < keywordSize; index++){
                 if(strlen(data + *i) > strlen(keywords[index].key) && !strncmp(keywords[index].key, data + *i, strlen(keywords[index].key))){
                     GE_KeyVal *kval;
@@ -169,14 +172,13 @@ namespace ge {
         uint32_t len = 0;
         int err = find(data + *i, &len, match);
         if(err){ return err; }
-        if(removeMatch && len == 1){ return 0; }
 
-        len++; //add and extra for the \0 at the end of string
-        len = (removeMatch)? len : len + 1;
+        len = (removeMatch)? len + 1 : len + 2;//add and extra for the \0 at the end of string
         *val = new char[len];
         strncpy(*val, (char *)(data + *i), len - 1);
         (*val)[len - 1] = '\0'; //de-reference then get val of string at len - 1
-        *i += (removeMatch)? len + 1 : len;
+        printf("HMMMM: |%s| %d\n", *val, (removeMatch)? len : len - 1);
+        *i += (removeMatch)? len : len - 1;
 
         return 0;
     }
@@ -197,31 +199,67 @@ namespace ge {
         return 0;
     }
 
+    int Config::removeWhitespace(char **val){
+        uint32_t start = 0, end = strlen(*val);
+        while( (*val)[start]   == ' ' || (*val)[start  ] == '\t' || (*val)[start]   == '\r' || (*val)[start]   == '\n'){ start++; }
+        while(((*val)[end - 1] == ' ' || (*val)[end - 1] == '\t' || (*val)[end - 1] == '\r' || (*val)[end - 1] == '\n') && start < end - 1){ end--; }
+        if((int)end - (int)start < 0){ return -2000; }
+        if(start == 0 && strlen(*val) == end){ return 0; }
+
+        char *newVal = new char[(end - start) + 1];
+        strncpy(newVal, start + *val, end - start);
+        newVal[end - start] = '\0';
+
+        delete *val;
+        *val = newVal;
+
+        return 0;
+    }
+
     int Config::splitVar(uint32_t *i, char *data, char **utype, char **name, char **val){
         int err = strip(i, data, utype, ' ', true);
         if(err){ return err; }
+        printf("%4s) %s\n", data + *i, *utype);
 
-        err = strip(i, data, name, (char *)" =", true);
+        err = strip(i, data, name, '=', true);
         if(err){ return err; }
+        printf("%4s) %s\n", data + *i, *name);
+
 
         err = strip(i, data, val, ';', true);
+        printf("%4s) %s\n", data + *i, *val);
         return (err)? err : 0;
     }
 
     int Config::splitVar(uint32_t *i, char *data, char **name, char **val){
+        printf("(%u))\n", *i);
         int err = strip(i, data, ' ');
         if(err){ return err; }
 
-        err = strip(i, data, name, (char *)" =", true);
+        printf("%c%c%c%c (%u))", data[*i], data[*i + 1], data[*i + 2], data[*i + 3], *i);
+        err = strip(i, data, name, '=', true);
+        removeWhitespace(name);
+        printf("whitespace strip |%s|\n", *name);
+        // printf(" %s\n", *name);
         if(err){ return err; }
 
+        printf("%c%c%c%c (%u))", data[*i], data[*i + 1], data[*i + 2], data[*i + 3], *i);
         err = strip(i, data, val, ';', true);
+        removeWhitespace(val);
+        printf("whitespace strip |%s|\n", *val);
         return (err)? err : 0;
     }
 
 
     int Config::comment(uint32_t *i, const char *path, char *data, GE_KeyVal **val){
-        return (data[++*i] == '/')? strip(i, data, '\n') : strip(i, data, (char *)"*/");
+        int err = (data[++*i] == '/')? strip(i, data, '\n') : strip(i, data, (char *)"*/");
+        if(err){ return err; }
+
+        *val = new GE_KeyVal;
+        (*val)->key = (char *)"";
+        (*val)->val = new GE_TypeVoid { GE_TYPE_NONE, (void *) new GE_TypeVoid { GE_PRE_DEF_COMMENT, nullptr } };
+
+        return 0;
     }
 
     int Config::hash(uint32_t *i, const char *path, char *data, GE_KeyVal **val){
@@ -237,9 +275,10 @@ namespace ge {
             err = strip(i, data, '\n');
             if(err){ return err; }
 
-            uint16_t *temp = new uint16_t;
-            *temp = ((GE_Type_None & 0xff) << 8) + (GE_PreDef_include & 0xff);
-            *val = new GE_KeyVal { includePath, (void *) temp };
+            *val = new GE_KeyVal;
+            (*val)->key = (char *)"";
+            (*val)->val = new GE_TypeVoid { GE_TYPE_NONE, (void *) new GE_TypeVoid { GE_PRE_DEF_INCLUDE, includePath } };
+
             return 0;
         }
 
@@ -265,19 +304,19 @@ namespace ge {
 
         if(strcmp(utype, "uint8_t")){
             delete [] utype;
-            (*val)->val = new GE_TypeVoid { GE_Type_uint8_t, (void *) new uint8_t((uint8_t)num) };
+            (*val)->val = new GE_TypeVoid { GE_TYPE_UINT8_T, (void *) new uint8_t((uint8_t)num) };
             return 0;
         }
 
         if(strcmp(utype, "uint16_t")){
             delete [] utype;
-            (*val)->val = new GE_TypeVoid { GE_Type_uint16_t, (void *) new uint8_t((uint8_t)num) };
+            (*val)->val = new GE_TypeVoid { GE_TYPE_UINT16_T, (void *) new uint8_t((uint8_t)num) };
             return 0;
         }
 
         if(strcmp(utype, "uint32_t")){
             delete [] utype;
-            (*val)->val = new GE_TypeVoid { GE_Type_uint32_t, (void *) new uint8_t((uint8_t)num) };
+            (*val)->val = new GE_TypeVoid { GE_TYPE_UINT32_T, (void *) new uint8_t((uint8_t)num) };
             return 0;
         }
 
@@ -294,7 +333,7 @@ namespace ge {
 
         *val = new GE_KeyVal;
         (*val)->key = name;
-        (*val)->val = new GE_TypeVoid { GE_Type_int, (void *) new int((int)num) };
+        (*val)->val = new GE_TypeVoid { GE_TYPE_INT, (void *) new int((int)num) };
 
         return 0;
     }
@@ -309,7 +348,7 @@ namespace ge {
 
         *val = new GE_KeyVal;
         (*val)->key = name;
-        (*val)->val = new GE_TypeVoid { GE_Type_float, (void *) new int(num) };
+        (*val)->val = new GE_TypeVoid { GE_TYPE_FLOAT, (void *) new int(num) };
 
         return 0;
     }
@@ -317,6 +356,7 @@ namespace ge {
     int Config::scale(uint32_t *i, const char *path, char *data, GE_KeyVal **val){
         char *name, *numstr;
         int err = splitVar(i, data, &name, &numstr);
+        printf("THE FUCK: %s, %s\n", name, numstr);
         if(err){ return err; }
 
         long num = strtol(numstr, nullptr, 10);
@@ -325,7 +365,7 @@ namespace ge {
 
         *val = new GE_KeyVal;
         (*val)->key = name;
-        (*val)->val = new GE_TypeVoid { GE_Type_Scale, (void *) new GE_Scale((GE_Scale)num) };
+        (*val)->val = new GE_TypeVoid { GE_TYPE_SCALE, (void *) new GE_Scale((GE_Scale)num) };
 
         return 0;
     }
@@ -340,7 +380,7 @@ namespace ge {
 
         *val = new GE_KeyVal;
         (*val)->key = name;
-        (*val)->val = new GE_TypeVoid { GE_Type_Color, (void *) new GE_Color((GE_Color)num) };
+        (*val)->val = new GE_TypeVoid { GE_TYPE_COLOR, (void *) new GE_Color((GE_Color)num) };
 
         return 0;
     }
@@ -358,7 +398,7 @@ namespace ge {
 
         *val = new GE_KeyVal;
         (*val)->key = name;
-        (*val)->val = new GE_TypeVoid { GE_Type_Sheet, (void *) sheet };
+        (*val)->val = new GE_TypeVoid { GE_TYPE_SHEET, (void *) sheet };
         return (sheet)? 0 : -14;
     }
 
@@ -377,7 +417,7 @@ namespace ge {
 
         *val = new GE_KeyVal;
         (*val)->key = name;
-        (*val)->val = new GE_TypeVoid { GE_Type_Bounds, (void *) new GE_Bounds { x, y, w, h } };
+        (*val)->val = new GE_TypeVoid { GE_TYPE_BOUNDS, (void *) new GE_Bounds { x, y, w, h } };
 
         return 0;
     }
@@ -397,7 +437,7 @@ namespace ge {
 
         *val = new GE_KeyVal;
         (*val)->key = name;
-        (*val)->val = new GE_TypeVoid { GE_Type_Bounds, (void *) new GE_Tile { w, h } };
+        (*val)->val = new GE_TypeVoid { GE_TYPE_BOUNDS, (void *) new GE_Tile { w, h } };
 
         return 0;
     }
@@ -465,7 +505,7 @@ namespace ge {
 
         *val = new GE_KeyVal;
         (*val)->key = name;
-        (*val)->val = new GE_TypeVoid { GE_Type_ColorGrid, (void *) colorGrid };
+        (*val)->val = new GE_TypeVoid { GE_TYPE_COLOR_GRID, (void *) colorGrid };
 
         return (sheet)? 0 : -14;
     }
