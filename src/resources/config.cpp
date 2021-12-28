@@ -38,7 +38,7 @@ namespace ge {
     }
 
     int Config::readFile(const char *path, bool load){
-        FILE *file = fopen(path, "r");
+        FILE *file = fopen(path, "rb");
         if(!file){ return -1; }
 
         fseek(file, 0L, SEEK_END);
