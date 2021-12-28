@@ -78,7 +78,7 @@ namespace ge {
         Group *group = (groups.find(groupName) != groups.end())? groups[groupName] : new Group(groupName);
 
         while(*i < (uint32_t)strlen(data)){
-            if(data[*i] == ' ' || data[*i] == '\n' || data[*i] == '\t'){ i++; continue; }
+            if(data[*i] == ' ' || data[*i] == '\n' || data[*i] == '\r' || data[*i] == '\t'){ i++; continue; }
 
             if(data[*i] == '}'){
                 groups[groupName] = group;
