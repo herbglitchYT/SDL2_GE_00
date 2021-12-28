@@ -8,16 +8,16 @@ namespace ge {
         keywords = new GE_Keyword[keywordSize]{
             { "/",            &comment   },
             { "#",            &hash      },
+            { "ColorGrid",    &colorGrid },
+            { "Sheet",        &sheet     },
+            { "Sprite",       &sprite    },
             { "uint",         &uintF     },
             { "int",          &intF      },
             { "float",        &floatF    },
             { "Scale",        &scale     },
             { "Color",        &color     },
-            { "Sheet",        &sheet     },
             { "Bounds",       &bounds    },
-            { "Tile",         &tile      },
-            { "Sprite",       &sprite    },
-            { "ColorGrid",    &colorGrid }
+            { "Tile",         &tile      }
         };
     }
 
