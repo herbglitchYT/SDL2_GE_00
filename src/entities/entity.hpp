@@ -20,6 +20,12 @@ namespace ge {
         virtual void render() = 0;
         virtual void render(SDL_FPoint &offset) = 0;
 
+        virtual bool collides(SDL_Rect *bounds) = 0;
+        virtual bool collides(SDL_Rect  bounds) = 0;
+
+        virtual bool collides(int  x, int  y) = 0;
+        virtual bool collides(SDL_Point pos) = 0;
+
         virtual void move(float *x, float *y);
         virtual void move(float  x, float  y);
         virtual void move(SDL_FPoint pos);

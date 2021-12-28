@@ -32,6 +32,8 @@ namespace ge {
         void setCenter(int x, int y);
         void setCenter(SDL_Point pos);
 
+        void setSprite(GE_Sprite *sprite);
+
         SDL_Point &getCenter();
 
     protected:

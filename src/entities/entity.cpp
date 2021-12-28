@@ -4,12 +4,12 @@
 #include <cmath>
 
 namespace ge {
-    Entity::Entity()                               : bounds({ 0, 0, 0, 0 }), pos({ 0.0f, 0.0f })                {}
-    Entity::Entity(SDL_FPoint pos)                 : bounds({ 0, 0, 0, 0 }), pos(pos)                           {}
-    Entity::Entity(SDL_Point pos)                  : bounds({ 0, 0, 0, 0 }), pos({ (float)pos.x, (float)pos.y }){}
-    Entity::Entity(SDL_Rect bounds)                : bounds(bounds),         pos({ 0.0f, 0.0f })                {}
-    Entity::Entity(SDL_Rect bounds, SDL_FPoint pos): bounds(bounds),         pos(pos)                           {}
-    Entity::Entity(SDL_Rect bounds, SDL_Point pos) : bounds(bounds),         pos({ (float)pos.x, (float)pos.y }){}
+    Entity::Entity()                               : bounds({ 0,          0,          0, 0 }), pos({ 0.0f, 0.0f })                {}
+    Entity::Entity(SDL_FPoint pos)                 : bounds({ (int)pos.x, (int)pos.y, 0, 0 }), pos(pos)                           {}
+    Entity::Entity(SDL_Point pos)                  : bounds({ pos.x,      pos.y,      0, 0 }), pos({ (float)pos.x, (float)pos.y }){}
+    Entity::Entity(SDL_Rect bounds)                : bounds(bounds),                           pos({ 0.0f, 0.0f })                {}
+    Entity::Entity(SDL_Rect bounds, SDL_FPoint pos): bounds(bounds),                           pos(pos)                           {}
+    Entity::Entity(SDL_Rect bounds, SDL_Point pos) : bounds(bounds),                           pos({ (float)pos.x, (float)pos.y }){}
 
     Entity::~Entity(){}
 
@@ -24,9 +24,24 @@ namespace ge {
     void Entity::move(SDL_Point pos) { move(&pos.x, &pos.y); }
 
     bool Entity::moveTo(SDL_Point coord, float speed){
-        float angle = atan2(coord.y - pos.y, coord.x - pos.x);
-        move(speed * cosf(angle), speed * sinf(angle));
-        return pos.x == coord.x && pos.y == coord.y;
+        SDL_FPoint dist = { coord.y - pos.y, coord.x - pos.x };
+
+        float angle = atan2(dist.x, dist.y);
+        SDL_FPoint velocity = { speed * cosf(angle) * ge::data->dt, speed * sinf(angle) * ge::data->dt };
+
+        if(fabsf(velocity.x) < fabsf(dist.x) || fabsf(velocity.y) < fabsf(dist.y)){
+            pos.x += velocity.x;
+            pos.y += velocity.y;
+        }
+        else {
+            pos.x = (float)coord.x;
+            pos.y = (float)coord.y;
+        }
+
+        bounds.x = (float)pos.x;
+        bounds.y = (float)pos.y;
+
+        return bounds.x == coord.x && bounds.y == coord.y;
     }
 
     void Entity::setPos(int *x, int *y){ bounds.x = *x; bounds.y = *y; pos.x = (float)*x; pos.y = (float)*y; }

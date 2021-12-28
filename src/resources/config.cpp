@@ -26,9 +26,11 @@ namespace ge {
     int Config::load(  const char* path){ return readFile(path, true ); }
     int Config::unload(const char* path){ return readFile(path, false); }
 
-    void Config::get(const char *name, GE_Sheet  *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Sheet)?  (GE_Sheet  *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_Bounds *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Bounds)? (GE_Bounds *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_Sprite *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Sprite)? (GE_Sprite *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Scale     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Scale)     ? (GE_Scale     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Bounds    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Bounds)    ? (GE_Bounds    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Sprite    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Sprite)    ? (GE_Sprite    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Sheet     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Sheet)     ? (GE_Sheet     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_ColorGrid *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_ColorGrid) ? (GE_ColorGrid *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
 
     bool Config::setGroup(const char *name){
         currGroup = groups[name];
@@ -318,6 +320,7 @@ namespace ge {
         if(err){ return err; }
 
         long num = strtol(numstr, nullptr, 10);
+        printf("numstr: %s\n", numstr);
         delete [] numstr;
 
         *val = new GE_KeyVal;

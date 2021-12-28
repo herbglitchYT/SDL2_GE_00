@@ -35,9 +35,11 @@ namespace ge {
 
         // void get(std::string name, char *&var);
         // void get(std::string name, std::string &var);
-        void get(const char *name, GE_Sheet  *&var);
-        void get(const char *name, GE_Bounds *&var);
-        void get(const char *name, GE_Sprite *&var);
+        void get(const char *name, GE_Scale     *&var);
+        void get(const char *name, GE_Bounds    *&var);
+        void get(const char *name, GE_Sheet     *&var);
+        void get(const char *name, GE_ColorGrid *&var);
+        void get(const char *name, GE_Sprite    *&var);
         // void get(std::string name, GE_ColorGrid *&var);
         // void get(std::string name, SDL_Rect &var);
         // void get(std::string name, Sprite *&var);

@@ -33,5 +33,7 @@ namespace ge {
     void Sprite::setCenter(int x, int y) { center = { x, y }; }
     void Sprite::setCenter(SDL_Point pos){ center = pos; }
 
+    void Sprite::setSprite(GE_Sprite *sprite){ this->sprite = sprite; }
+
     SDL_Point &Sprite::getCenter(){ return center; }
 }
