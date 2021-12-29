@@ -10,7 +10,12 @@
 namespace ge {
     class QuadTree {
     public:
-        QuadTree(GE_Bounds bounds): subdivisions({ nullptr, nullptr, nullptr, nullptr }), entity(nullptr), bounds(bounds){}
+        QuadTree(GE_Bounds bounds): entity(nullptr), bounds(bounds){
+            for(unsigned short i = 0; i < 4; i++){
+                if(subdivisions[i]){ subdivisions[i] = nullptr; }
+            }
+        }
+
         ~QuadTree(){
             for(unsigned short i = 0; i < 4; i++){
                 if(subdivisions[i]){ delete subdivisions[i]; }
@@ -19,14 +24,14 @@ namespace ge {
 
         void render(){
             SDL_SetRenderDrawColor(ge::data->renderer, 0xff, 0xff, 0xff, 0xff);
-            SDL_RenderDrawRect(ge::data->renderer, bounds);
+            SDL_RenderDrawRect(ge::data->renderer, &bounds);
             for(unsigned short i = 0; i < 4; i++){
                 if(subdivisions[i]){ subdivisions[i]->render(); }
             }
         }
 
         bool insert(Entity *entity){
-            if(!pointInBounds(entity->getPos()))){ return false; }
+            if(!pointInBounds(entity->getPos())){ return false; }
 
             if(!this->entity){
                 this->entity = entity;
@@ -38,7 +43,7 @@ namespace ge {
         }
 
         bool remove(Entity *entity){
-            if(!pointInBounds(entity->getPos()))){ return false; }
+            if(!pointInBounds(entity->getPos())){ return false; }
         }
 
         void query(GE_Bounds *bounds, std::vector<Entity *> &entities){
@@ -78,30 +83,30 @@ namespace ge {
         void subdivide(Entity *entity){
             if(entity->getPos().x <= (bounds.x + (bounds.w / 2)) && entity->getPos().y <= (bounds.y + (bounds.h / 2))){
                 if(!subdivisions[0]){ subdivisions[0] = new QuadTree({ bounds.x, bounds.y, bounds.w / 2, bounds.h / 2 }); }
-                subdivisions[0].insert(entity);
+                subdivisions[0]->insert(entity);
                 return;
             }
 
             if(entity->getPos().y <= (bounds.y + (bounds.h / 2))){
-                if(!subdivisions[1]){ subdivisions[1] = new QuadTree({ bounds.x + bounds.w / 2, bounds.y, bounds.w, bounds.h / 2 }); }
-                subdivisions[1].insert(entity);
+                if(!subdivisions[1]){ subdivisions[1] = new QuadTree({ bounds.x + bounds.w / 2, bounds.y, bounds.w / 2, bounds.h / 2 }); }
+                subdivisions[1]->insert(entity);
                 return;
             }
 
             if(entity->getPos().x <= (bounds.x + (bounds.w / 2))){
-                if(!subdivisions[2]){ subdivisions[2] = new QuadTree({ bounds.x, bounds.y + bounds.h / 2, bounds.w / 2, bounds.h }); }
-                subdivisions[2].insert(entity);
+                if(!subdivisions[2]){ subdivisions[2] = new QuadTree({ bounds.x, bounds.y + bounds.h / 2, bounds.w / 2, bounds.h / 2 }); }
+                subdivisions[2]->insert(entity);
                 return;
             }
 
-            if(!subdivisions[3]){ subdivisions[3] = new QuadTree({ bounds.x + bounds.w / 2, bounds.y + bounds.h / 2, bounds.w, bounds.h }); }
-            subdivisions[3].insert(entity);
+            if(!subdivisions[3]){ subdivisions[3] = new QuadTree({ bounds.x + bounds.w / 2, bounds.y + bounds.h / 2, bounds.w / 2, bounds.h / 2 }); }
+            subdivisions[3]->insert(entity);
             return;
         }
 
-        bool pointInBounds(SDL_Point &point){
-            return point.x >= bounds.x && point.x <= bounds.x + bounds.w &&
-                   point.y >= bounds.y && point.y <= bounds.y + bounds.h;
+        bool pointInBounds(SDL_FPoint &point){
+            return (int)point.x >= bounds.x && (int)point.x <= bounds.x + bounds.w &&
+                   (int)point.y >= bounds.y && (int)point.y <= bounds.y + bounds.h;
         }
 
         bool containsBounds(GE_Bounds *bounds){
