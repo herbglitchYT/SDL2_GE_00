@@ -6,17 +6,16 @@
 namespace ge {
     class Surface : public State, public Handler<Entity> {
     public:
-        Surface(): offset({0.0f, 0.0f}){}
-        Surface(SDL_FPoint offset): offset(offset){}
+        Surface(): offset(nullptr){}
         virtual ~Surface(){};
 
         virtual void update(){};
 
         virtual void render(){
-            for(Entity *entity : hTypes){ entity->render(offset); }
+            for(Entity *entity : hTypes){ if(offset){ entity->render(*offset); } }
         };
 
     protected:
-        SDL_FPoint offset;
+        SDL_FPoint *offset;
     };
 }
