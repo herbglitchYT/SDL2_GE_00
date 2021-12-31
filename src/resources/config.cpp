@@ -26,11 +26,11 @@ namespace ge {
     int Config::load(  const char* path){ return readFile(path, true ); }
     int Config::unload(const char* path){ return readFile(path, false); }
 
-    void Config::get(const char *name, GE_Scale     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_SCALE)      ? (GE_Scale     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_Bounds    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_BOUNDS)     ? (GE_Bounds    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_Sprite    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Sprite)     ? (GE_Sprite    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_Sheet     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_SHEET)      ? (GE_Sheet     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_ColorGrid *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_COLOR_GRID) ? (GE_ColorGrid *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Scale     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_SCALE)     ? (GE_Scale     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Bounds    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_BOUNDS)    ? (GE_Bounds    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Sprite    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Sprite)    ? (GE_Sprite    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Sheet     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_SHEET)     ? (GE_Sheet     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_ColorGrid *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_COLOR_GRID)? (GE_ColorGrid *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
 
     bool Config::setGroup(const char *name){
         currGroup = groups[name];
@@ -70,7 +70,6 @@ namespace ge {
             if(((GE_TypeVoid *)((GE_TypeVoid *)kval->val)->data)->id == GE_PRE_DEF_INCLUDE){ return readFile((char *)((GE_TypeVoid *)((GE_TypeVoid *)kval->val)->data)->data, load); }
             return -4;
         }
-        printf("key: |%s|\n", kval->key);
         group->data[kval->key] = kval->val;
         return 0;
     }
@@ -79,7 +78,6 @@ namespace ge {
         Group *group = (groups.find(groupName) != groups.end())? groups[groupName] : new Group(groupName);
 
         while(*i < (uint32_t)strlen(data)){
-            printf("~~~%u, %u~~~\n", *i, strlen(data));
             if(data[*i] == ' ' || data[*i] == '\n' || data[*i] == '\r' || data[*i] == '\t'){ ++*i; continue; }
 
             if(data[*i] == '}'){
@@ -102,7 +100,6 @@ namespace ge {
                 if(err){ return err; }
             }
 
-            printf("%c%c%c%c (%u))", data[*i], data[*i + 1], data[*i + 2], data[*i + 3], *i);
             for(uint32_t index = 0; index < keywordSize; index++){
                 if(strlen(data + *i) > strlen(keywords[index].key) && !strncmp(keywords[index].key, data + *i, strlen(keywords[index].key))){
                     GE_KeyVal *kval;

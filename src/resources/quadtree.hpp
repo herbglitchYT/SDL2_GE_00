@@ -30,6 +30,15 @@ namespace ge {
             }
         }
 
+        void render(SDL_FPoint &offset){
+            SDL_SetRenderDrawColor(ge::data->renderer, 0xff, 0xff, 0xff, 0xff);
+            SDL_Rect temp = { bounds.x + (int)offset.x, bounds.y + (int)offset.y, bounds.w, bounds.h };
+            SDL_RenderDrawRect(ge::data->renderer, &temp);
+            for(unsigned short i = 0; i < 4; i++){
+                if(subdivisions[i]){ subdivisions[i]->render(offset); }
+            }
+        }
+
         bool insert(Entity *entity){
             if(!pointInBounds(entity->getPos())){ return false; }
 
@@ -47,13 +56,14 @@ namespace ge {
         }
 
         void query(GE_Bounds *bounds, std::vector<Entity *> &entities){
-            if(SDL_HasIntersection(&this->bounds, bounds)){ return; }
+            if(!SDL_HasIntersection(&this->bounds, bounds)){ return; }
 
             if(containsBounds(bounds)){
                 query(entities);
                 return;
             }
 
+            entities.push_back(entity);
             for(unsigned short i = 0; i < 4; i++){
                 if(subdivisions[i]){ subdivisions[i]->query(entities); }
             }
