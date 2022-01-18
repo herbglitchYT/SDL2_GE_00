@@ -18,16 +18,21 @@
 #define GE_TYPE_BOUNDS     0x09
 
 #define GE_TYPE_TILE       0x0a
-#define GE_Type_Sprite     0x0b
+#define GE_TYPE_SPRITE     0x0b
 #define GE_TYPE_COLOR_GRID 0x0c
 
 //predefs
 #define GE_PRE_DEF_INCLUDE 0x01
 #define GE_PRE_DEF_COMMENT 0x02
 
+typedef struct GE_TypeVoid {
+    uint8_t id;
+    void *data;
+} GE_TypeVoid;
+
 typedef struct GE_KeyVal {
     char *key;
-    void *val;
+    GE_TypeVoid *val;
 } GE_KeyVal;
 
 typedef struct GE_Keyword {
@@ -35,10 +40,6 @@ typedef struct GE_Keyword {
     int (*get)(uint32_t *i, const char *path, char *data, GE_KeyVal **val);
 } GE_Keyword;
 
-typedef struct GE_TypeVoid {
-    uint8_t id;
-    void *data;
-} GE_TypeVoid;
 
 struct GE_Keycmp {
     int operator()(char const *a, char const *b) const { return strcmp(a, b) < 0; }

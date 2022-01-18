@@ -8,24 +8,27 @@ namespace ge {
         enum State { NONE, PRESSED, RELEASED };
 
         void update(SDL_Event &event){
+            if(released){
+                *released = State::NONE;
+                released = nullptr;
+            }
+
             button = SDL_GetMouseState(&x, &y);
 
-            for(int i = 0; i < 5; i++){
-                if((event.button.state == SDL_PRESSED || event.motion.state == SDL_PRESSED) && event.button.button == (i + 1)){
-                    mouse[i] = PRESSED;
-                    continue;
-                }
+            if(event.type != SDL_MOUSEBUTTONDOWN && event.type != SDL_MOUSEBUTTONUP){ return; }
+            if(event.button.button < 1 || event.button.button > 6)  { return; }
 
-                if(mouse[i] == PRESSED && event.button.state == SDL_RELEASED && event.button.button == (i + 1)){
-                    mouse[i] = RELEASED;
-                    continue;
-                }
-
-                if(mouse[i] == RELEASED){
-                    mouse[i] = NONE;
-                }
+            if(event.type == SDL_MOUSEBUTTONDOWN){
+                mouse[event.button.button - 1] = State::PRESSED;
+                return;
             }
+
+            mouse[event.button.button - 1] = State::RELEASED;
+            released = (mouse + event.button.button - 1);
         }
+
+        bool getPress  (int key){ return mouse[key - 1] == State::PRESSED;  }
+        bool getRelease(int key){ return mouse[key - 1] == State::RELEASED; }
 
         State &operator[](int i){ return mouse[i - 1]; }
 
@@ -33,6 +36,7 @@ namespace ge {
         Uint32 button; //TODO: use button
 
     private:
-        State mouse[5];
+        State mouse[5] = { NONE };
+        State *released = nullptr;
     };
 }

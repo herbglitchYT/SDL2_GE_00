@@ -41,9 +41,10 @@ int GE::run(){
 
         SDL_PollEvent(&(ge::data->event));
         if(ge::data->event.type == SDL_QUIT){ break; }
-        if(ge::data->event.key.keysym.sym == SDLK_ESCAPE && ge::data->event.key.type == SDL_KEYDOWN){ break; }
+
         ge::data->mouse.update(ge::data->event);
         ge::data->keyboard.update(ge::data->event);
+        if(ge::data->event.type == SDL_KEYDOWN && ge::data->event.key.keysym.sym == SDLK_ESCAPE && ge::data->event.key.type == SDL_KEYDOWN){ break; }
 
         ge::data->state.update();
 

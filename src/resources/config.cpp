@@ -21,16 +21,53 @@ namespace ge {
         };
     }
 
-    Config::~Config(){  }
+    Config::~Config(){
+        for(std::pair<const char *, Group *> group : groups){
+            for(std::pair<const char *, GE_TypeVoid *> g : group.second->data){
+                void *gdata = ((GE_TypeVoid *)g.second->data)->data;
+                switch(g.second->id){
+                    case GE_TYPE_SPRITE:
+                        SDL_DestroyTexture((SDL_Texture *)((GE_Sprite *)gdata)->sheet);
+                        delete ((GE_Sprite *)gdata)->bounds;
+                        break;
+
+                    case GE_TYPE_COLOR_GRID:
+                        // delete[] ((GE_ColorGrid *)gdata)->colors;
+                        // delete (GE_ColorGrid *)gdata;
+                        break;
+
+                    case GE_TYPE_SHEET:
+                        SDL_DestroyTexture((SDL_Texture *)gdata);
+                        break;
+
+                    case GE_TYPE_UINT8_T : delete (uint8_t   *)gdata; break;
+                    case GE_TYPE_UINT16_T: delete (uint16_t  *)gdata; break;
+                    case GE_TYPE_UINT32_T: delete (uint32_t  *)gdata; break;
+                    case GE_TYPE_INT     : delete (int       *)gdata; break;
+                    case GE_TYPE_FLOAT   : delete (float     *)gdata; break;
+                    case GE_TYPE_SCALE   : delete (GE_Scale  *)gdata; break;
+                    case GE_TYPE_COLOR   : delete (GE_Color  *)gdata; break;
+                    // case GE_TYPE_BOUNDS  : delete (GE_Bounds *)gdata; break;
+                    case GE_TYPE_TILE    : delete (GE_Tile   *)gdata; break;
+                    default:
+                        delete (GE_TypeVoid *)g.second->data;
+                        break;
+                }
+                delete g.second;
+            }
+
+            delete group.second;
+        }
+    }
 
     int Config::load(  const char* path){ return readFile(path, true ); }
     int Config::unload(const char* path){ return readFile(path, false); }
 
-    void Config::get(const char *name, GE_Scale     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_SCALE)     ? (GE_Scale     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_Bounds    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_BOUNDS)    ? (GE_Bounds    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_Sprite    *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_Type_Sprite)    ? (GE_Sprite    *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_Sheet     *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_SHEET)     ? (GE_Sheet     *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
-    void Config::get(const char *name, GE_ColorGrid *&var){ var = (((GE_TypeVoid *)currGroup->data[name])->id == GE_TYPE_COLOR_GRID)? (GE_ColorGrid *)((GE_TypeVoid *)currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Scale     *&var){ var = ((currGroup->data[name])->id == GE_TYPE_SCALE)     ? (GE_Scale     *)(currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Bounds    *&var){ var = ((currGroup->data[name])->id == GE_TYPE_BOUNDS)    ? (GE_Bounds    *)(currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Sprite    *&var){ var = ((currGroup->data[name])->id == GE_TYPE_SPRITE)    ? (GE_Sprite    *)(currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_Sheet     *&var){ var = ((currGroup->data[name])->id == GE_TYPE_SHEET)     ? (GE_Sheet     *)(currGroup->data[name])->data : nullptr; }
+    void Config::get(const char *name, GE_ColorGrid *&var){ var = ((currGroup->data[name])->id == GE_TYPE_COLOR_GRID)? (GE_ColorGrid *)(currGroup->data[name])->data : nullptr; }
 
     bool Config::setGroup(const char *name){
         currGroup = groups[name];
@@ -66,8 +103,8 @@ namespace ge {
 
     int Config::handleKeyVal(Group *group, GE_KeyVal *kval, bool &load){
         if(((GE_TypeVoid *)kval->val)->id == GE_TYPE_NONE){
-            if(((GE_TypeVoid *)((GE_TypeVoid *)kval->val)->data)->id == GE_PRE_DEF_COMMENT){ return 0; }
-            if(((GE_TypeVoid *)((GE_TypeVoid *)kval->val)->data)->id == GE_PRE_DEF_INCLUDE){ return readFile((char *)((GE_TypeVoid *)((GE_TypeVoid *)kval->val)->data)->data, load); }
+            if(((GE_TypeVoid *)(kval->val)->data)->id == GE_PRE_DEF_COMMENT){ return 0; }
+            if(((GE_TypeVoid *)(kval->val)->data)->id == GE_PRE_DEF_INCLUDE){ return readFile((char *)((GE_TypeVoid *)((GE_TypeVoid *)kval->val)->data)->data, load); }
             return -4;
         }
         group->data[kval->key] = kval->val;
@@ -174,7 +211,6 @@ namespace ge {
         *val = new char[len];
         strncpy(*val, (char *)(data + *i), len - 1);
         (*val)[len - 1] = '\0'; //de-reference then get val of string at len - 1
-        printf("HMMMM: |%s| %d\n", *val, (removeMatch)? len : len - 1);
         *i += (removeMatch)? len : len - 1;
 
         return 0;
@@ -207,7 +243,7 @@ namespace ge {
         strncpy(newVal, start + *val, end - start);
         newVal[end - start] = '\0';
 
-        delete *val;
+        delete [] *val;
         *val = newVal;
 
         return 0;
@@ -216,34 +252,24 @@ namespace ge {
     int Config::splitVar(uint32_t *i, char *data, char **utype, char **name, char **val){
         int err = strip(i, data, utype, ' ', true);
         if(err){ return err; }
-        printf("%4s) %s\n", data + *i, *utype);
 
         err = strip(i, data, name, '=', true);
         if(err){ return err; }
-        printf("%4s) %s\n", data + *i, *name);
-
 
         err = strip(i, data, val, ';', true);
-        printf("%4s) %s\n", data + *i, *val);
         return (err)? err : 0;
     }
 
     int Config::splitVar(uint32_t *i, char *data, char **name, char **val){
-        printf("(%u))\n", *i);
         int err = strip(i, data, ' ');
         if(err){ return err; }
 
-        printf("%c%c%c%c (%u))", data[*i], data[*i + 1], data[*i + 2], data[*i + 3], *i);
         err = strip(i, data, name, '=', true);
         removeWhitespace(name);
-        printf("whitespace strip |%s|\n", *name);
-        // printf(" %s\n", *name);
         if(err){ return err; }
 
-        printf("%c%c%c%c (%u))", data[*i], data[*i + 1], data[*i + 2], data[*i + 3], *i);
         err = strip(i, data, val, ';', true);
         removeWhitespace(val);
-        printf("whitespace strip |%s|\n", *val);
         return (err)? err : 0;
     }
 
@@ -353,11 +379,9 @@ namespace ge {
     int Config::scale(uint32_t *i, const char *path, char *data, GE_KeyVal **val){
         char *name, *numstr;
         int err = splitVar(i, data, &name, &numstr);
-        printf("THE FUCK: %s, %s\n", name, numstr);
         if(err){ return err; }
 
         long num = strtol(numstr, nullptr, 10);
-        printf("numstr: %s\n", numstr);
         delete [] numstr;
 
         *val = new GE_KeyVal;
@@ -462,7 +486,6 @@ namespace ge {
         spriteDataIndex = 0;
         if(!find(sheetStr, &spriteDataIndex, '.')){
             char *sheetPath = url((char *)path, sheetStr + 1);
-            printf("url: %s\n", sheetPath);
             sheet = Spritesheet::load(sheetPath);
         }
         else {
@@ -484,7 +507,7 @@ namespace ge {
 
         *val = new GE_KeyVal;
         (*val)->key = name;
-        (*val)->val = new GE_TypeVoid { GE_Type_Sprite, (void *) new GE_Sprite { sheet, bounds } };
+        (*val)->val = new GE_TypeVoid { GE_TYPE_SPRITE, (void *) new GE_Sprite { sheet, bounds } };
 
         return 0;
     }

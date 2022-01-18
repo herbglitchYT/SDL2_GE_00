@@ -13,14 +13,9 @@ target_sources(ge PRIVATE
 
     src/entities/entity.cpp
     src/entities/sprite.cpp
-    src/entities/tilemap.cpp
-
-    src/inputs/keyboard.cpp
 
     src/resources/config.cpp
     src/resources/spritesheet.cpp
-
-    src/states/grid.cpp
 )
 
 target_include_directories(ge PUBLIC src/)

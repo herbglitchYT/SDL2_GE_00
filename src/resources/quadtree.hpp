@@ -10,11 +10,7 @@
 namespace ge {
     class QuadTree {
     public:
-        QuadTree(GE_Bounds bounds): entity(nullptr), bounds(bounds){
-            for(unsigned short i = 0; i < 4; i++){
-                if(subdivisions[i]){ subdivisions[i] = nullptr; }
-            }
-        }
+        QuadTree(GE_Bounds bounds): entity(nullptr), bounds(bounds){}
 
         ~QuadTree(){
             for(unsigned short i = 0; i < 4; i++){
@@ -124,7 +120,7 @@ namespace ge {
                    bounds->y >= this->bounds.y && bounds->y + bounds->h <= this->bounds.y + this->bounds.h;
         }
 
-        QuadTree *subdivisions[4];
+        QuadTree *subdivisions[4] = { nullptr, nullptr, nullptr, nullptr };
 
         Entity *entity;
 

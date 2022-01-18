@@ -49,7 +49,7 @@ namespace ge {
     private:
         struct Group {
             const char *name;
-            std::map<const char *, void *, GE_Keycmp> data;
+            std::map<const char *, GE_TypeVoid *, GE_Keycmp> data;
 
             Group(const char *name): name(name){}
         };
