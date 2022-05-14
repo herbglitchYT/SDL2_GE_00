@@ -10,10 +10,12 @@ add_library(ge)
 
 target_sources(ge PRIVATE
     src/ge.cpp
-    src/input/keyboard.cpp
-    src/resource/config.cpp
-    src/resource/sprite.cpp
-    src/resource/spritesheet.cpp
+
+    src/entities/entity.cpp
+    src/entities/sprite.cpp
+
+    src/resources/config.cpp
+    src/resources/spritesheet.cpp
 )
 
 target_include_directories(ge PUBLIC src/)

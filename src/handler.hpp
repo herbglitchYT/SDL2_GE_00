@@ -1,8 +1,6 @@
-#ifndef GE_HANDLER_HPP
-#define GE_HANDLER_HPP
+#pragma once
 
 #include <vector>
-#include <iostream>
 
 namespace ge {
     template <class HandlerType>
@@ -15,18 +13,11 @@ namespace ge {
             clear();
         }
 
-        template <class HType>
-        void updateHandler(){
+        virtual void update(){
             clean();
-            for(HType *hType : hTypes){ hType->update(); }
+            for(HandlerType *hType : hTypes){ hType->update(); }
         }
 
-        template <class HType>
-        void renderHandler(){
-            for(HType *hType : hTypes){ hType->render(); }
-        }
-
-        virtual void update(){ updateHandler<HandlerType>(); }
         virtual void render(){ for(HandlerType *hType : hTypes){ hType->render(); } }
 
         void add(HandlerType *hType, bool removing = false){
@@ -50,16 +41,6 @@ namespace ge {
             }
         }
 
-        void remove(int id){
-            if(hTypes.empty()){ return; }
-            for(unsigned int i = 0; i < hTypes.size(); i++){
-                if(hTypes.at(i)->id == id){
-                    deleteQueue.push_back(hTypes.at(i));
-                    hTypes.erase(hTypes.begin() + i);
-                }
-            }
-        }
-
         void clean(){
             for(HandlerType *hType : deleteQueue){ delete hType; }
             deleteQueue.clear();
@@ -77,6 +58,3 @@ namespace ge {
         std::vector<HandlerType *> deleteQueue;
     };
 }
-
-#endif // !GE_HANDLER_HPP
-

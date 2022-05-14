@@ -1,5 +1,7 @@
 #include "ge.hpp"
 
+#include <stdio.h>
+
 ge::Data *ge::data;
 
 int GE::init(int width, int height, const char *title){
@@ -39,13 +41,14 @@ int GE::run(){
 
         SDL_PollEvent(&(ge::data->event));
         if(ge::data->event.type == SDL_QUIT){ break; }
-        if(ge::data->event.key.keysym.sym == SDLK_ESCAPE && ge::data->event.key.type == SDL_KEYDOWN){ break; }
+
         ge::data->mouse.update(ge::data->event);
         ge::data->keyboard.update(ge::data->event);
+        if(ge::data->event.type == SDL_KEYDOWN && ge::data->event.key.keysym.sym == SDLK_ESCAPE && ge::data->event.key.type == SDL_KEYDOWN){ break; }
 
         ge::data->state.update();
 
-        SDL_SetRenderDrawColor(ge::data->renderer, 0x33, 0x48, 0x57, 0x00);
+        SDL_SetRenderDrawColor(ge::data->renderer, 0x1b, 0x2b, 0x3b, 0x00);
         SDL_RenderClear(ge::data->renderer);
         ge::data->state.render();
         SDL_RenderPresent(ge::data->renderer);
