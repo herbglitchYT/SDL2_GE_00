@@ -13,7 +13,7 @@ namespace ge {
                 released = nullptr;
             }
 
-            button = SDL_GetMouseState(&x, &y);
+            button = SDL_GetMouseState(&(coord.x), &(coord.y));
 
             if(event.type != SDL_MOUSEBUTTONDOWN && event.type != SDL_MOUSEBUTTONUP){ return; }
             if(event.button.button < 1 || event.button.button > 6)  { return; }
@@ -32,7 +32,7 @@ namespace ge {
 
         State &operator[](int i){ return mouse[i - 1]; }
 
-        int x, y;
+        SDL_Point coord = { 0, 0 };
         Uint32 button; //TODO: use button
 
     private:

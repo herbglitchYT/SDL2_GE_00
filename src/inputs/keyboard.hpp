@@ -6,7 +6,7 @@
 namespace ge {
     class Keyboard {
     public:
-        enum State { PRESSED, RELEASED, NONE };
+        enum State { NONE, PRESSED, RELEASED };
 
         void update(SDL_Event &event){
             if(released){

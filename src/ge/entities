@@ -1,3 +1,0 @@
-#include "../entities/entity.hpp"
-#include "../entities/sprite.hpp"
-#include "../entities/tilemap.hpp"
